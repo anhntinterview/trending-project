@@ -1,23 +1,45 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+   "ts-node": {
+      // Do not forget to `yarn add -D tsconfig-paths`
+      "require": ["tsconfig-paths/register"]
+   },
+   "compilerOptions": {
+      "lib": [
+         "es5",
+         "es6",
+         "DOM"
+      ],
+      "target": "es5",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "outDir": "./build",
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "sourceMap": true,
+      "allowJs": true,
+      "skipLibCheck": true,
+      "strict": false,
+      "forceConsistentCasingInFileNames": true,
+      "noEmit": true,
+      "incremental": true,
+      "esModuleInterop": true,
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "allowImportingTsExtensions": true,
+      "jsx": "preserve",
+      "baseUrl": ".",
+      "paths": {
+         "@db/*": ["./src/database/*"],
+         "@*": ["./src*"]
+      },
+   },
+   "include": [
+      "src",
+      "**/*.ts",
+      "**/*.tsx",
+      "next.config.js",
+   ],
+   "exclude": [
+      "node_modules"
+   ]
 }

@@ -1,25 +1,46 @@
 {
-  "name": "e-lab",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@types/node": "18.15.13",
-    "@types/react": "18.0.38",
-    "@types/react-dom": "18.0.11",
-    "autoprefixer": "10.4.14",
-    "eslint": "8.39.0",
-    "eslint-config-next": "13.3.1",
-    "next": "13.3.1",
-    "postcss": "8.4.23",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "tailwindcss": "3.3.1",
-    "typescript": "5.0.4"
-  }
+   "name": "e-lab",
+   "version": "0.1.0",
+   "private": true,
+   "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "ts-node src/database/index.ts",
+      "generate": "ts-node ./src/database/generate/index.ts",
+      "lint": "next lint",
+      "typeorm": "typeorm-ts-node-commonjs",
+      "db:setup": "yarn db:create:dev && yarn db:create:test",
+      "db:create:dev": "createdb --owner=postgres next_now_dev",
+      "db:create:test": "createdb --owner=postgres next_now_test",
+      "g:migration": "yarn typeorm:local migration:generate -n",
+      "g:entity": "yarn typeorm:local entity:create -n",
+      "typeorm:local": "yarn local ./node_modules/typeorm/cli.js",
+      "local": "DOTENV_CONFIG_PATH=./.env ts-node -P ./tsconfig.yarn.json -r dotenv/config"
+   },
+   "dependencies": {
+      "autoprefixer": "10.4.14",
+      "crypto": "^1.0.1",
+      "dotenv": "^16.0.3",
+      "eslint": "8.39.0",
+      "eslint-config-next": "13.3.1",
+      "next": "13.3.1",
+      "pg": "^8.4.0",
+      "postcss": "8.4.23",
+      "react": "18.2.0",
+      "react-dom": "18.2.0",
+      "reflect-metadata": "^0.1.13",
+      "tailwindcss": "3.3.1",
+      "typeorm": "0.3.15"
+   },
+   "devDependencies": {
+      "@types/node": "^18.16.3",
+      "@types/pg": "^8.6.6",
+      "@types/react": "^18.2.0",
+      "@types/react-dom": "^18.2.1",
+      "chance": "^1.1.11",
+      "prettier": "^2.8.8",
+      "ts-node": "^10.9.1",
+      "tsconfig-paths": "^4.2.0",
+      "typescript": "^5.0.4"
+   }
 }
