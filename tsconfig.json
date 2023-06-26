@@ -30,6 +30,7 @@
       "baseUrl": ".",
       "paths": {
          "@db/*": ["./src/database/*"],
+         "@fe/*": [".src/fe/"],
          "@*": ["./src*"]
       },
    },

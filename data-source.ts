@@ -1,7 +1,5 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-// import { Product } from "@db/entity/Product";
-// import { Tag } from "@db/entity/Tag";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
