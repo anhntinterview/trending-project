@@ -5,7 +5,7 @@
    "scripts": {
       "dev": "next dev",
       "build": "next build",
-      "start": "ts-node src/database/index.ts",
+      "start": "next start -p 4000",
       "generate": "ts-node ./src/database/generate/index.ts",
       "lint": "next lint",
       "typeorm": "typeorm-ts-node-commonjs",

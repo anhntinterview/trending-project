@@ -89,7 +89,7 @@ export const CustomerCustomerAddress = async () => {
 
 AppDataSource.initialize()
   .then(async () => {
-    // await ProductTag();
+    await ProductTag();
     await CustomerCustomerAddress();
   })
   .catch((error) => console.log(error));
