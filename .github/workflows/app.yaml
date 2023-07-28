@@ -19,7 +19,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run scripts file
         run: |
-          chmod +x ./bin/test.sh
+          # chmod +x ./bin/test.sh
+          ./bin/test.sh
         shell: bash
       
   build_test:
