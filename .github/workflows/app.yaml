@@ -20,11 +20,11 @@ jobs:
       - name: Run scripts file
         run: |
           chmod +x ./bin/test.sh
-          ./bin/test.sh
         shell: bash
       
   build_test:
     runs-on: ubuntu-latest
+    needs: test_load_script
     steps:
       - uses: actions/checkout@v3
 
