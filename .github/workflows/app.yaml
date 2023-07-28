@@ -24,9 +24,10 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           passphrase: ""
           envs: IMAGE_NAME,CONTAINER_NAME,{{ secrets.DOCKERHUB_USERNAME }},{{ secrets.DOCKERHUB_PASSWORD }}, ${{ secrets.DOCKERHUB_TAG }}
-          script: |
-            chmod +x ./bin/test.sh
-            ./bin/test.sh execute
+      - name: Executealbe
+        run: |
+          chmod +x ./bin/test.sh
+          ./bin/test.sh execute
       
   # build_test:
   #   runs-on: ubuntu-latest
