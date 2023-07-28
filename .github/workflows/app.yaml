@@ -15,13 +15,18 @@ env:
 jobs:
   test_load_script:
     runs-on: ubuntu-latest
-    steps: 
-      - uses: actions/checkout@v3
-      - name: Run scripts file
-        run: |
-          chmod +x ./bin/test.sh
-          ./bin/test.sh all
-        shell: bash
+    steps:
+      - name: Deploy to Digital Ocean droplet from DockerHub
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          passphrase: ""
+          envs: IMAGE_NAME,CONTAINER_NAME,{{ secrets.DOCKERHUB_USERNAME }},{{ secrets.DOCKERHUB_PASSWORD }}, ${{ secrets.DOCKERHUB_TAG }}
+          script: |
+            chmod +x ./bin/test.sh
+            ./bin/test.sh all
       
   # build_test:
   #   runs-on: ubuntu-latest

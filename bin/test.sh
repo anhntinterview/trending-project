@@ -30,10 +30,10 @@ launch() {
 execute() {
     local task={1}
     case ${task} in
-        clear)
+        "--clear")
             clean
             ;;
-        run)
+        "--run")
             pull
             launch
             ;;
