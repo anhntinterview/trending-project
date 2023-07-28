@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-err() {
-    echo $* >&2
-}
-
-usage() {
-    err "$(basename $0): [clear|run]"
-}
-
 clean() {
     if [ "$(docker ps -a | grep -c ${{ env.CONTAINER_NAME }})" -gt 0 ]; then
     docker stop ${{ env.CONTAINER_NAME }}
@@ -28,27 +20,7 @@ launch() {
 }
 
 execute() {
-    local task={1}
-    case ${task} in
-        "--clear")
-            clean
-            ;;
-        "--run")
-            pull
-            launch
-            ;;
-        *)
-            err "invalid task: ${task}"
-            usage
-            exit 1
-            ;;
-    esac
+    clean
+    pull
+    launch
 }
-
-main() {
-    [ $# -ne 1 ] && { usage; exit 1; }
-    local task=${1}
-    execute ${task}
-}
-
-main $@
