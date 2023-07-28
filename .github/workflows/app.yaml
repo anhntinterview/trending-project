@@ -13,6 +13,16 @@ env:
   IMAGE_NAME: elab-image-server
   CONTAINER_NAME: elab-container-server
 jobs:
+  test_load_script:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v3
+      - name: Run scripts file
+        run: |
+          chmod +x ./bin/test.sh
+          ./bin/test.sh
+        shell: bash
+      
   build_test:
     runs-on: ubuntu-latest
     steps:
