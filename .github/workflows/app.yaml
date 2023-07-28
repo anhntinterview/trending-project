@@ -20,7 +20,7 @@ jobs:
       - name: Run scripts file
         run: |
           chmod +x ./bin/test.sh
-          ./bin/test.sh build_docker
+          ./bin/test.sh all
         shell: bash
       
   # build_test:
