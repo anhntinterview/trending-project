@@ -1,46 +1,61 @@
 {
-   "ts-node": {
-      // Do not forget to `yarn add -D tsconfig-paths`
-      "require": ["tsconfig-paths/register"]
-   },
-   "compilerOptions": {
-      "lib": [
-         "es5",
-         "es6",
-         "DOM"
+  "ts-node": {
+    // Do not forget to `yarn add -D tsconfig-paths`
+    "require": [
+      "tsconfig-paths/register"
+    ]
+  },
+  "compilerOptions": {
+    "lib": [
+      "es5",
+      "es6",
+      "DOM"
+    ],
+    "target": "esnext",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./build",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowImportingTsExtensions": true,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@db/*": [
+        "./src/database/*"
       ],
-      "target": "es5",
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "outDir": "./build",
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "sourceMap": true,
-      "allowJs": true,
-      "skipLibCheck": true,
-      "strict": false,
-      "forceConsistentCasingInFileNames": true,
-      "noEmit": true,
-      "incremental": true,
-      "esModuleInterop": true,
-      "resolveJsonModule": true,
-      "isolatedModules": true,
-      "allowImportingTsExtensions": true,
-      "jsx": "preserve",
-      "baseUrl": ".",
-      "paths": {
-         "@db/*": ["./src/database/*"],
-         "@fe/*": [".src/fe/"],
-         "@*": ["./src*"]
-      },
-   },
-   "include": [
-      "src",
-      "**/*.ts",
-      "**/*.tsx",
-      "next.config.js",
-   ],
-   "exclude": [
-      "node_modules"
-   ]
+      "@*": [
+        "./src*"
+      ],
+      "@root*": [
+        "./*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
+  },
+  "include": [
+    "src",
+    "**/*.ts",
+    "**/*.tsx",
+    "next.config.js",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

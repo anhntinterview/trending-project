@@ -15,6 +15,20 @@ import { Tag } from '@db/entity/tag.entity';
 import { Customer } from '@db/entity/customer.entity';
 import { CustomerAddress } from '@db/entity/customer-address.entity';
 import { cityName, countryList, nameList } from '@/ultilize/const';
+import { Test, RelatedTest } from '@db/entity/test.entity';
+
+export const TestGen = async () => {
+  const test = new Test();
+  test.name = "abc"
+
+  const relatedTest = new RelatedTest();
+  relatedTest.related_name = "abc-01"
+
+  await AppDataSource.manager.save(test);
+  await AppDataSource.manager.save(relatedTest);
+
+  console.log(`==============`, await AppDataSource.manager.find(Test));
+}
 
 export const ProductTag = async () => {
   for (let i = 0; i < 10; i++) {
@@ -89,7 +103,8 @@ export const CustomerCustomerAddress = async () => {
 
 AppDataSource.initialize()
   .then(async () => {
-    await ProductTag();
-    await CustomerCustomerAddress();
+    // await ProductTag();
+    // await CustomerCustomerAddress();
+    await TestGen();
   })
   .catch((error) => console.log(error));
