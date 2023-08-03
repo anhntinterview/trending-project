@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
 import { Customer } from './customer.entity';
 
-@Entity()
+@Entity({name: 'customer_address'})
 export class CustomerAddress {
   @PrimaryGeneratedColumn('uuid')
   id: number;

@@ -15,20 +15,24 @@ import { Tag } from '@db/entity/tag.entity';
 import { Customer } from '@db/entity/customer.entity';
 import { CustomerAddress } from '@db/entity/customer-address.entity';
 import { cityName, countryList, nameList } from '@/ultilize/const';
-import { Test, RelatedTest } from '@db/entity/test.entity';
+import { TableA, TableB } from '@db/entity/test.entity';
 
 export const TestGen = async () => {
-  const test = new Test();
-  test.name = "abc"
+  const tableB = new TableB();
+  const tableA = new TableA();
 
-  const relatedTest = new RelatedTest();
-  relatedTest.related_name = "abc-01"
+  tableA.name = 'tableA3';
+  tableB.name = 'tableB2';
 
-  await AppDataSource.manager.save(test);
-  await AppDataSource.manager.save(relatedTest);
+  tableB.tableAs = [tableA];
+  tableA.tableBs = [tableB];
 
-  console.log(`==============`, await AppDataSource.manager.find(Test));
-}
+  await AppDataSource.manager.save(tableA);
+  await AppDataSource.manager.save(tableB);
+
+  console.log(`==============`, await AppDataSource.manager.find(TableA, {relations: ["tableBs"]}));
+  console.log(`==============`, await AppDataSource.manager.find(TableB, {relations: ["tableAs"]}));
+};
 
 export const ProductTag = async () => {
   for (let i = 0; i < 10; i++) {

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { RelatedTest, Test } from '@db/entity/test.entity';
+import { TableA, TableB } from '@db/entity/test.entity';
 import path from 'path';
 import { DataSource } from 'typeorm';
 
@@ -15,7 +15,7 @@ export const AppDataSource = new DataSource({
   // entities: [path.join(__dirname, './src/database/entity/*.*')],    
     // entities: [__dirname + "src/database/entity/**/*.ts"],
     // entities: ["src/database/entity/**/*.ts"],
-    entities: [Test, RelatedTest],
+    entities: [TableA, TableB],
   migrations: [],
   subscribers: []
 });

@@ -30,6 +30,7 @@
       "react-dom": "18.2.0",
       "reflect-metadata": "^0.1.13",
       "tailwindcss": "3.3.1",
+      "typedi": "^0.10.0",
       "typeorm": "0.3.15"
    },
    "devDependencies": {
