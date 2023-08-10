@@ -1,6 +1,5 @@
 import ApiOperation from '@/core/provider/api-operation.provider';
 import CustomerController from './customer.controller';
-import { MethodType } from '@/core/method';
 import { Container } from 'typedi';
 import { CustomersDTO } from './customer.dto';
 
