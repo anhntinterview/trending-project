@@ -45,7 +45,7 @@ jobs:
         run: yarn build
 
       - name: Test
-        run: echo 'Implement test here!'
+        run: yarn test
   build_and_push:
     runs-on: ubuntu-latest
     needs: build_test

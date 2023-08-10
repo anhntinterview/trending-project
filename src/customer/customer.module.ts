@@ -1,4 +1,4 @@
-import ApiOperation from '@/core/api-operation';
+import ApiOperation from '@/core/provider/api-operation.provider';
 import CustomerController from './customer.controller';
 import { MethodType } from '@/core/method';
 import { Container } from 'typedi';

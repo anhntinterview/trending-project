@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, OneToMany, ManyToOne, JoinColumn, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
 
 @Entity({name: 'tableA'})
 export class TableA {
@@ -26,4 +26,13 @@ export class TableB {
   @JoinTable({name: 'tableB_tableA'})
   tableAs: TableA[];
 
+}
+
+@Entity({ name: 'lab_entity' })
+export class LabEntity {
+  @PrimaryGeneratedColumn()
+  id?: number;
+
+  @Column()
+  name?: string;
 }

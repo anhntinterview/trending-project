@@ -1,6 +1,5 @@
 import 'reflect-metadata';
-import { TableA, TableB } from '@db/entity/test.entity';
-import path from 'path';
+import { LabEntity, TableA, TableB } from '@db/entity/test.entity';
 import { DataSource } from 'typeorm';
 
 export const AppDataSource = new DataSource({
@@ -15,7 +14,7 @@ export const AppDataSource = new DataSource({
   // entities: [path.join(__dirname, './src/database/entity/*.*')],    
     // entities: [__dirname + "src/database/entity/**/*.ts"],
     // entities: ["src/database/entity/**/*.ts"],
-    entities: [TableA, TableB],
+    entities: [TableA, TableB, LabEntity],
   migrations: [],
   subscribers: []
 });
