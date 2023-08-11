@@ -103,9 +103,9 @@ jobs:
             docker pull $(echo ${{ secrets.DOCKERHUB_USERNAME }})/$(echo $IMAGE_NAME):$(echo ${{ secrets.DOCKERHUB_TAG }} | head -c7)
             # Run a new container from a new image
             docker run --name ${{ env.CONTAINER_NAME }} -d -p 4000:4000 $(echo ${{ secrets.DOCKERHUB_USERNAME }})/$(echo $IMAGE_NAME):$(echo ${{ secrets.DOCKERHUB_TAG }} | head -c7)
-  prod:
+  staging:
     runs-on: ubuntu-latest
-    environment: prod
+    environment: staging
     needs: dev
     # All of error was fixed so the "continue-on-error" should be false
     continue-on-error: false
