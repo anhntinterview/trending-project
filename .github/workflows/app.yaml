@@ -1,17 +1,17 @@
 name: micro elab server
 on:
   push:
-    branches: [master]
+    branches: [prod]
   pull_request:
-    branches: [master]
+    branches: [prod]
   workflow_dispatch:
     inputs:
       version:
         description: "v1.0"
         required: true
 env:
-  IMAGE_NAME: elab-image-server
-  CONTAINER_NAME: elab-container-server
+  IMAGE_NAME: elab-image-server-prod
+  CONTAINER_NAME: elab-container-server-prod
 jobs: 
   build_test:
     runs-on: ubuntu-latest
@@ -72,41 +72,10 @@ jobs:
       #   run: docker build -t $(echo ${{ secrets.DOCKERHUB_USERNAME }})/$(echo $IMAGE_NAME):$(echo ${{ secrets.DOCKERHUB_TAG }} | head -c7) -f Dockerfile.app .
       # - name: Push docker image to DockerHub
       #   run: docker push $(echo ${{ secrets.DOCKERHUB_USERNAME }})/$(echo $IMAGE_NAME):$(echo ${{ secrets.DOCKERHUB_TAG }} | head -c7)
-  dev:
+  prod:
     runs-on: ubuntu-latest
-    environment: dev
+    environment: prod
     needs: build_and_push
-    # All of error was fixed so the "continue-on-error" should be false
-    continue-on-error: false
-    steps:
-      - name: Deploy to Digital Ocean droplet from DockerHub
-        uses: appleboy/ssh-action@v0.1.3
-        with:
-          host: ${{ secrets.DEV_HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.DEV_SSHKEY }}
-          passphrase: ""
-          envs: IMAGE_NAME,CONTAINER_NAME,{{ secrets.DOCKERHUB_USERNAME }},{{ secrets.DOCKERHUB_PASSWORD }}, ${{ secrets.DOCKERHUB_TAG }}
-          script: |
-            # Login to Docker Hub
-            # echo {{ secrets.DOCKERHUB_PASSWORD }} | docker login -u {{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-            # Stop & Remove running container & image
-            if [ "$(docker ps -a | grep -c ${{ env.CONTAINER_NAME }})" -gt 0 ]; then
-            docker stop ${{ env.CONTAINER_NAME }}
-            docker rm ${{ env.CONTAINER_NAME }}
-            docker image prune -a -f
-            echo "[---- Deleted container ${{ env.CONTAINER_NAME }}]"
-            else
-            echo "[---- Container with name: ${{ env.CONTAINER_NAME }}  doesn't exist. ]"
-            fi
-            # Pull from DockerHub
-            docker pull $(echo ${{ secrets.DOCKERHUB_USERNAME }})/$(echo $IMAGE_NAME):$(echo ${{ secrets.DOCKERHUB_TAG }} | head -c7)
-            # Run a new container from a new image
-            docker run --name ${{ env.CONTAINER_NAME }} -d -p 4000:4000 $(echo ${{ secrets.DOCKERHUB_USERNAME }})/$(echo $IMAGE_NAME):$(echo ${{ secrets.DOCKERHUB_TAG }} | head -c7)
-  staging:
-    runs-on: ubuntu-latest
-    environment: staging
-    needs: dev
     # All of error was fixed so the "continue-on-error" should be false
     continue-on-error: false
     steps:
@@ -133,4 +102,4 @@ jobs:
             # Pull from DockerHub
             docker pull $(echo ${{ secrets.DOCKERHUB_USERNAME }})/$(echo $IMAGE_NAME):$(echo ${{ secrets.DOCKERHUB_TAG }} | head -c7)
             # Run a new container from a new image
-            docker run --name ${{ env.CONTAINER_NAME }} -d -p 4000:4000 $(echo ${{ secrets.DOCKERHUB_USERNAME }})/$(echo $IMAGE_NAME):$(echo ${{ secrets.DOCKERHUB_TAG }} | head -c7)
+            docker run --name ${{ env.CONTAINER_NAME }} -d -p 5000:5000 $(echo ${{ secrets.DOCKERHUB_USERNAME }})/$(echo $IMAGE_NAME):$(echo ${{ secrets.DOCKERHUB_TAG }} | head -c7)
