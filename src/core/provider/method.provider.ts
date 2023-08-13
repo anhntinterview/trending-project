@@ -8,7 +8,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     if (this.req.method === 'GET') {
       return await callback();
     } else {
-      return this.res.status(405).json({ message: 'GET Method Not Allowed' });
+      return this.res.status(405).json({ message: 'Only GET Method Allowed' });
     }
   }
 
@@ -16,7 +16,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     if (this.req.method === 'POST') {
       return await callback();
     } else {
-      return this.res.status(405).json({ message: 'POST Method Not Allowed' });
+      return this.res.status(405).json({ message: 'Only POST Method Allowed' });
     }
   }
 
@@ -24,7 +24,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     if (this.req.method === 'PUT') {
       return await callback();
     } else {
-      return this.res.status(405).json({ message: 'PUT Method Not Allowed' });
+      return this.res.status(405).json({ message: 'Only PUT Method Allowed' });
     }
   }
 
@@ -32,7 +32,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     if (this.req.method === 'PATCH') {
       return await callback();
     } else {
-      return this.res.status(405).json({ message: 'PATCH Method Not Allowed' });
+      return this.res.status(405).json({ message: 'Only PATCH Method Allowed' });
     }
   }
 
@@ -40,7 +40,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     if (this.req.method === 'DELETE') {
       return await callback();
     } else {
-      return this.res.status(405).json({ message: 'DELETE Method Not Allowed' });
+      return this.res.status(405).json({ message: 'Only DELETE Method Allowed' });
     }
   }
 

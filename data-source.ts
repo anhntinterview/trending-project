@@ -4,11 +4,11 @@ import { DataSource } from 'typeorm';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: '159.223.71.223',
+  host: process.env.DB_HOST,
   port: 5432,
-  username: 'admin',
-  password: '221089abcdE%',
-  database: 'elabdev',
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   synchronize: true,
   logging: false,
   // entities: [path.join(__dirname, './src/database/entity/*.*')],    
