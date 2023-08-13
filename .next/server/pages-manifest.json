@@ -1,9 +1,0 @@
-{
-  "/api/hello": "pages/api/hello.js",
-  "/api/logger": "pages/api/logger.js",
-  "/api/test": "pages/api/test.js",
-  "/_error": "pages/_error.js",
-  "/_app": "pages/_app.js",
-  "/_document": "pages/_document.js",
-  "/404": "pages/404.html"
-}
