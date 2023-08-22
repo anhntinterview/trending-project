@@ -1,5 +1,6 @@
 import { Service } from 'typedi';
 import ApiOperationBase from './api-operation.base';
+import { DeleteResult } from 'typeorm';
 
 @Service()
 class MethodProvider<T> extends ApiOperationBase<T> {
@@ -12,7 +13,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     }
   }
 
-  async post(callback: () => Promise<T>): Promise<void | T>  {
+  async post(callback: () => Promise<void | T>): Promise<void | T>  {
     if (this.req.method === 'POST') {
       return await callback();
     } else {
@@ -20,7 +21,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     }
   }
 
-  async put(callback: () => Promise<T>): Promise<void | T>  {
+  async put(callback: () => Promise<void | T>): Promise<void | T>  {
     if (this.req.method === 'PUT') {
       return await callback();
     } else {
@@ -28,7 +29,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     }
   }
 
-  async patch(callback: () => Promise<T>): Promise<void | T>  {
+  async patch(callback: () => Promise<void | T>): Promise<void | T>  {
     if (this.req.method === 'PATCH') {
       return await callback();
     } else {
@@ -36,7 +37,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     }
   }
 
-  async delete(callback: () => Promise<T>): Promise<void | T>  {
+  async delete(callback: () => Promise<void | DeleteResult>): Promise<void | DeleteResult>  {
     if (this.req.method === 'DELETE') {
       return await callback();
     } else {

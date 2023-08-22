@@ -2,10 +2,7 @@ import TestController from './test.controller';
 import { Container } from 'typedi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import ApiOperationProvider from '@/core/provider/api-operation.provider';
-
-function isNotVoid<T>(value: T | void): value is T {
-  return value !== undefined;
-}
+import { isNotVoid } from '@/util/type';
 
 class TestModule<T> {
   constructor(private readonly req: NextApiRequest,private readonly res: NextApiResponse<T>) {}

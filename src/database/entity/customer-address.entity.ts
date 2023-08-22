@@ -36,7 +36,7 @@ export class CustomerAddress {
   @Column({type: 'uuid', generated: "uuid"})
   updated_by: string;
 
-  @ManyToMany(() => Customer, (customer) => customer.addresses)
+  @ManyToMany(() => Customer, (customer) => customer.addresses, { cascade: true })
   @JoinTable()
   customer: Customer;
 }

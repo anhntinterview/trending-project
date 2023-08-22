@@ -5,7 +5,7 @@ import { CustomerAddress } from './customer-address.entity';
 export class Customer {
   @PrimaryGeneratedColumn('uuid')
   id: number;
-
+  
   @Column({type: 'varchar', length: 100})
   first_name: string;
 
@@ -36,6 +36,6 @@ export class Customer {
   @Column({type: 'uuid', generated: "uuid"})
   updated_by: string;
 
-  @ManyToMany(() => CustomerAddress, (address) => address.customer)
+  @ManyToMany(() => CustomerAddress, (address) => address.customer, { cascade: true })
   addresses: CustomerAddress[];
 }
