@@ -19,33 +19,31 @@ class CustomerController<T> {
     return await this.methodProvider.get(() => this.customerService.all());
   }
 
-  async findOne(customerId: number, req: NextApiRequest, res: NextApiResponse<T>): Promise<void | T> {
+  async findOne(customerId: string, req: NextApiRequest, res: NextApiResponse<T>): Promise<void | T> {
     await this.methodProvider.initialize(req, res);
     return await this.methodProvider.get(() => this.customerService.findOne(customerId));
   }
 
   async createOne(
     customerData: Customer,
-    customerAddressData: CustomerAddress,
     req: NextApiRequest,
     res: NextApiResponse<T>
   ): Promise<void | T> {
     await this.methodProvider.initialize(req, res);
-    return await this.methodProvider.post(() => this.customerService.createOne(customerData, customerAddressData));
+    return await this.methodProvider.post(() => this.customerService.createOne(customerData, req, res));
   }
 
   async createMany(
     customersData: Customer[],
-    customerAddressesData: CustomerAddress[],
     req: NextApiRequest,
     res: NextApiResponse<T>
   ): Promise<void | T> {
     await this.methodProvider.initialize(req, res);
-    return await this.methodProvider.post(() => this.customerService.createMany(customersData, customerAddressesData));
+    return await this.methodProvider.post(() => this.customerService.createMany(customersData, req, res));
   }
 
   async updateOne(
-    customerId: number,
+    customerId: string,
     customerData: Customer,
     req: NextApiRequest,
     res: NextApiResponse<T>
@@ -55,7 +53,7 @@ class CustomerController<T> {
   }
 
   async updateMany(
-    customersId: number[],
+    customersId: string[],
     customersData: Customer[],
     req: NextApiRequest,
     res: NextApiResponse<T>
@@ -64,12 +62,12 @@ class CustomerController<T> {
     return await this.methodProvider.put(() => this.customerService.updateMany(customersId, customersData));
   }
 
-  async deleteOne(customerId: number, req: NextApiRequest, res: NextApiResponse<T>): Promise<void | DeleteResult> {
+  async deleteOne(customerId: string, req: NextApiRequest, res: NextApiResponse<T>): Promise<void | DeleteResult> {
     await this.methodProvider.initialize(req, res);
     return await this.methodProvider.delete(() => this.customerService.deleteOne(customerId));
   }
 
-  async deleteMany(customersId: number[], req: NextApiRequest, res: NextApiResponse<T>): Promise<void | DeleteResult> {
+  async deleteMany(customersId: string[], req: NextApiRequest, res: NextApiResponse<T>): Promise<void | DeleteResult> {
     await this.methodProvider.initialize(req, res);
     return await this.methodProvider.delete(() => this.customerService.deleteMany(customersId));
   }

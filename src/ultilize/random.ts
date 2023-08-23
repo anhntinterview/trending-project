@@ -65,11 +65,9 @@ export function generatePassword() {
 }
 
 export function getRandomEmail() {
-  let result = ' ';
-  const l = characters.length;
-  for (let i = 0; i < l; i++) {
-    result += characters.charAt(Math.floor(Math.random() * l));
-  }
-
-  return result;
+  const domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'example.com', 'domain.com'];
+  const randomUsername = Math.random().toString(36).substring(7);
+  const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+  const email = `${randomUsername}@${randomDomain}`;
+  return email;
 }

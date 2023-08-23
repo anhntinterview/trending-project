@@ -4,6 +4,9 @@ import { DeleteResult, Repository } from 'typeorm';
 import CustomerRepository from './customer.repository';
 import CustomerAddressRepository from '@/customer-address/customer-address.repository';
 import { Service } from 'typedi';
+import { validate } from 'class-validator';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { MapErrorType } from '@/util/type';
 
 @Service()
 class CustomerService<T> {
@@ -14,54 +17,76 @@ class CustomerService<T> {
 
   // return type of Promise<CustomersDTO>
   async all(): Promise<T> {
-    const qb = await this.customerRepository
+    const qbCustomer = await this.customerRepository
       .createQueryBuilder('customer')
       .leftJoinAndSelect('customer.addresses', 'addresses');
 
-    const count = await qb.getCount();
-    const list = await qb.getMany();
+    const countCustomer = await qbCustomer.getCount();
+    const listCustomer = await qbCustomer.getMany();
 
-    return { list, count } as T;
+    const qbCustomerAddress = await this.customerAddressRepository
+      .createQueryBuilder('customer_address')
+      .leftJoinAndSelect('customer_address.customers', 'customers');
+
+    const countCustomerAddress = await qbCustomerAddress.getCount();
+    const listCustomerAddress = await qbCustomerAddress.getMany();
+
+    return { countCustomer, listCustomer, countCustomerAddress, listCustomerAddress } as T;
   }
 
   // return type of Promise<CustomersDTO>
-  async findOne(customerId: number): Promise<T> {
-    const customer = await this.customerRepository.findOne({
-      where: { id: customerId }
-    });
-    return { customer } as T;
+  async findOne(customerId: string): Promise<T> {
+    return await this.customerRepository
+      .createQueryBuilder('customer')
+      .leftJoinAndSelect('customer.addresses', 'addresses')
+      .where('customer.id = :customerId', { customerId }).getOne() as T;
   }
 
   // return type of Promise<Customer>
-  async createOne(customerData: Customer, customerAddressData: CustomerAddress): Promise<T> {
+  async createOne(
+    customerData: Customer,
+    req: NextApiRequest,
+    res: NextApiResponse<T | void | MapErrorType>
+  ): Promise<T | void> {
+    const customerAddressList: Array<CustomerAddress> = [];
     let customerAddress = new CustomerAddress();
-    customerAddress.address_line1 = customerAddressData.address_line1;
-    customerAddress.address_line2 = customerAddressData.address_line2;
-    customerAddress.city = customerAddressData.city;
-    customerAddress.country = customerAddressData.country;
-    customerAddress.phone_number = customerAddressData.phone_number;
-    customerAddress.postal_code = customerAddressData.postal_code;
+    customerData.addresses?.map(async (item) => {
+      const customerAddressErrors = await validate(customerAddress);
+      if (customerAddressErrors.length > 0) {
+        return res.status(400).json({ errors: customerAddressErrors.map((err) => err.constraints) });
+      }
+      customerAddressList.push(item);
+    });
 
     let customer = new Customer();
     customer.first_name = customerData.first_name;
     customer.last_name = customerData.last_name;
     customer.phone_number = customerData.phone_number;
     customer.email = customerData.email;
-    customer.addresses = [customerAddress];
+    customer.password_hash = customerData.password_hash;
+    customer.active = false;
+    customer.addresses = customerAddressList;
 
+    const customerErrors = await validate(customer);
+
+    if (customerErrors.length > 0) {
+      return res.status(400).json({ errors: customerErrors.map((err) => err.constraints) });
+    }
     return (await this.customerRepository.save(customer)) as T;
   }
 
-  async createMany(customersData: Customer[], customerAddressesData: CustomerAddress[]): Promise<void> {
+  async createMany(
+    customersData: Customer[],
+    req: NextApiRequest,
+    res: NextApiResponse<T | void | MapErrorType>
+  ): Promise<void> {
     customersData.map(async (c) => {
-      customerAddressesData.map(async (ca) => {
-        await this.createOne(c, ca);
-      });
+      await this.createOne(c, req, res);
     });
   }
 
   // return type of Promise<Customer | undefined>
-  async updateOne(customerId: number, customerData: Customer): Promise<T | undefined> {
+  async updateOne(customerId: string, customerData: Customer): Promise<T | undefined> {
     let toUpdate = await this.customerRepository.findOne({
       where: { id: customerId },
       relations: ['addresses']
@@ -72,7 +97,7 @@ class CustomerService<T> {
     }
   }
 
-  async updateMany(customersId: number[], customersData: Customer[]): Promise<void> {
+  async updateMany(customersId: string[], customersData: Customer[]): Promise<void> {
     customersId.map(async (ci) => {
       customersData.map(async (c) => {
         return await this.updateOne(ci, c);
@@ -80,11 +105,11 @@ class CustomerService<T> {
     });
   }
 
-  async deleteOne(customerId: number): Promise<DeleteResult> {
+  async deleteOne(customerId: string): Promise<DeleteResult> {
     return await this.customerRepository.delete({ id: customerId });
   }
 
-  async deleteMany(customersId: number[]) {
+  async deleteMany(customersId: string[]) {
     customersId.map(async (ci) => {
       return await this.customerRepository.delete({ id: ci });
     });

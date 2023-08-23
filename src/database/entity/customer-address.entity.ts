@@ -1,42 +1,49 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, CreateDateColumn, BeforeInsert } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { Customer } from './customer.entity';
 
-@Entity({name: 'customer_address'})
+@Entity({ name: 'customer_address' })
 export class CustomerAddress {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
-  @Column({type: 'text'})
+  @Column({ type: 'text' })
   address_line1: string;
 
-  @Column({type: 'text'})
+  @Column({ type: 'text' })
   address_line2: string;
 
-  @Column({type: 'varchar', length: 255})
+  @Column({ type: 'varchar', length: 255 })
   postal_code: string;
 
-  @Column({type: 'varchar', length: 255})
+  @Column({ type: 'varchar', length: 255 })
   country: string;
 
-  @Column({type: 'varchar', length: 255})
+  @Column({ type: 'varchar', length: 255 })
   city: string;
 
-  @Column({type: 'varchar', length: 255})
+  @Column({ type: 'varchar', length: 255 })
   phone_number: string;
 
-  @Column({type: 'timestamptz'})
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
-  @Column({type: 'timestamptz'})
+  @CreateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  @Column({type: 'uuid', generated: "uuid"})
+  @Column({ type: 'uuid', generated: 'uuid' })
   created_by: string;
 
-  @Column({type: 'uuid', generated: "uuid"})
+  @Column({ type: 'uuid', generated: 'uuid' })
   updated_by: string;
 
-  @ManyToMany(() => Customer, (customer) => customer.addresses, { cascade: true })
+  @ManyToMany(() => Customer, (customer) => customer.addresses)
   @JoinTable()
-  customer: Customer;
+  customers?: Customer[];
+
+  @BeforeInsert()
+  generateUUID() {
+    this.created_by = uuidv4();
+    this.updated_by = uuidv4();
+  }
 }

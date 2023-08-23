@@ -20,7 +20,7 @@ class CustomerModule<T> {
     }
   }
 
-  async getOne(customerId: number) {
+  async getOne(customerId: string) {
     await this.apiOperationProvider.initialize(this.req, this.res);
     if (isNotVoid<T>) {
       await this.apiOperationProvider.execute(
@@ -29,11 +29,11 @@ class CustomerModule<T> {
     }
   }
 
-  async createOne(customerData: Customer, customerAddressData: CustomerAddress) {
+  async createOne(customerData: Customer) {
     await this.apiOperationProvider.initialize(this.req, this.res);
     if (isNotVoid<T>) {
       await this.apiOperationProvider.execute(
-        () => this.customerController.createOne(customerData, customerAddressData, this.req, this.res) as Promise<T>
+        () => this.customerController.createOne(customerData, this.req, this.res) as Promise<T>
       );
     }
   }
@@ -42,12 +42,12 @@ class CustomerModule<T> {
     await this.apiOperationProvider.initialize(this.req, this.res);
     if (isNotVoid<T>) {
       await this.apiOperationProvider.execute(
-        () => this.customerController.createMany(customersData, customerAddressesData, this.req, this.res) as Promise<T>
+        () => this.customerController.createMany(customersData, this.req, this.res) as Promise<T>
       );
     }
   }
 
-  async updateOne(customerId: number, customerData: Customer) {
+  async updateOne(customerId: string, customerData: Customer) {
     await this.apiOperationProvider.initialize(this.req, this.res);
     if (isNotVoid<T>) {
       await this.apiOperationProvider.execute(
@@ -56,7 +56,7 @@ class CustomerModule<T> {
     }
   }
 
-  async updateMany(customersId: number[], customersData: Customer[]) {
+  async updateMany(customersId: string[], customersData: Customer[]) {
     await this.apiOperationProvider.initialize(this.req, this.res);
     if (isNotVoid<T>) {
       await this.apiOperationProvider.execute(
@@ -65,7 +65,7 @@ class CustomerModule<T> {
     }
   }
 
-  async deleteOne(customerId: number) {
+  async deleteOne(customerId: string) {
     await this.apiOperationProvider.initialize(this.req, this.res);
     if (isNotVoid<T>) {
       await this.apiOperationProvider.execute(
@@ -74,7 +74,7 @@ class CustomerModule<T> {
     }
   }
 
-  async deleteMany(customersId: number[]) {
+  async deleteMany(customersId: string[]) {
     await this.apiOperationProvider.initialize(this.req, this.res);
     if (isNotVoid<T>) {
       await this.apiOperationProvider.execute(
