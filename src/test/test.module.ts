@@ -1,26 +1,22 @@
 import TestController from './test.controller';
 import { Container } from 'typedi';
 import { NextApiRequest, NextApiResponse } from 'next';
-import ApiOperationProvider from '@/core/provider/api-operation.provider';
-import { isNotVoid } from '@/util/type';
+import ApiProvider from '@/core/provider/singleton/api.provider';
+import ApiOperationBase from '@/core/provider/api-operation.base';
 
-class TestModule<T> {
-  constructor(private readonly req: NextApiRequest,private readonly res: NextApiResponse<T>) {}
+class TestModule<T> extends ApiOperationBase<T>  {
+  constructor(protected readonly req: NextApiRequest, protected readonly res: NextApiResponse<T>) {
+    super(req, res);
+  }
   
   private testController = Container.get(TestController<T>);
-  private readonly apiOperationProvider = Container.get(ApiOperationProvider<T>);
+  private readonly apiProvider = new ApiProvider<T>(this.req, this.res);
 
   async getAll() {
-    await this.apiOperationProvider.initialize(this.req, this.res);
-    if(isNotVoid<T>){
-      await this.apiOperationProvider.execute(
-        () => this.testController.all(this.req, this.res) as Promise<T>
-      );
-    }
-  }
-
-  async main() {
-    await this.getAll();
+    await this.apiProvider.handleHttpRequestResponse(
+      'get', // method
+      () => this.testController.all() // callback
+    );
   }
 }
 

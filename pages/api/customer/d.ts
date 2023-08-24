@@ -5,6 +5,5 @@ import { CustomersDTO } from '@/customer/customer.dto';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<CustomersDTO>) {
   const customerModule = new CustomerModule<CustomersDTO>(req, res);
-  const { customerData } = req.body;
-  await customerModule.createOne(customerData);
+  await customerModule.deleteOne();
 }

@@ -6,5 +6,5 @@ export interface CustomersDTO {
 }
 
 export interface CustomerRO {
-  customer: Customer | null;
+  customer: Customer;
 }

@@ -5,5 +5,5 @@ import { EnnvironmentDTO } from '@/logger/logger.dto';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<EnnvironmentDTO>) {
   const loggerModule = new LoggerModule<EnnvironmentDTO>(req, res);
-  await loggerModule.main();  
+  await loggerModule.getEnvironment();  
 }

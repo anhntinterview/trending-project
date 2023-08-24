@@ -1,17 +1,21 @@
-import { AppDataSource } from '@root/data-source';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { Service } from 'typedi';
-import { ErrorResponse } from './api-operation.abstract';
-import ApiOperationBase from './api-operation.base';
+import { DeleteResult } from 'typeorm';
+import { AppDataSource } from '@root/data-source';
+import { ErrorResponse, SuccessResponse } from '@/core/provider/api-operation.abstract';
+import ApiOperationBase from '@/core/provider/api-operation.base';
 
 @Service()
 class ApiOperationProvider<T> extends ApiOperationBase<T> {
-  async execute(callback: () => Promise<T>): Promise<void | ErrorResponse> {
+  async execute(
+    callback: (bodyData?: T) => Promise<void | T | DeleteResult>
+  ): Promise<void> {
     try {
       await AppDataSource.initialize();
       const result = await callback();
-      this.sendResponse(result);
+      this.sendResponse(result as T);
     } catch (error) {
-      return this.sendErrorResponse({ message: error.message });
+      this.sendErrorResponse({ message: error.message });
     } finally {
       await AppDataSource.destroy();
     }
@@ -21,13 +25,13 @@ class ApiOperationProvider<T> extends ApiOperationBase<T> {
     this.res.status(200).json(result);
   }
 
-  private sendErrorResponse(error): ErrorResponse {
+  sendErrorResponse(error): ErrorResponse {
     this.res.status(400).json(error);
     return error;
   }
 
-  constructor() {
-    super();
+  constructor(req: NextApiRequest, res: NextApiResponse<SuccessResponse<T> | ErrorResponse>) {
+    super(req, res);
   }
 }
 

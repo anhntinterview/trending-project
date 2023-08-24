@@ -5,5 +5,5 @@ import { TestsDTO } from '@/test/test.dto';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<TestsDTO>) {
   const testModule = new TestModule<TestsDTO>(req, res);
-  await testModule.main();  
+  await testModule.getAll();  
 }

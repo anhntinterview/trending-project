@@ -1,75 +1,53 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { Container, Service } from 'typedi';
-import { CustomerRO, CustomersDTO } from './customer.dto';
-import CustomerService from './customer.service';
-import MethodProvider from '@/core/provider/method.provider';
-import { Customer } from '@db/entity/customer.entity';
-import { CustomerAddress } from '@db/entity/customer-address.entity';
 import { DeleteResult } from 'typeorm';
+import CustomerService from '@/customer/customer.service';
+import { Customer } from '@db/entity/customer.entity';
+
 
 @Service()
 class CustomerController<T> {
   private customerService = Container.get(CustomerService<T>);
-  private readonly methodProvider = Container.get(MethodProvider<T>);
 
   constructor() {}
 
-  async all(req: NextApiRequest, res: NextApiResponse<T>): Promise<void | T> {
-    await this.methodProvider.initialize(req, res);
-    return await this.methodProvider.get(() => this.customerService.all());
+  async all(): Promise<T> {
+    return await  this.customerService.all();
   }
 
-  async findOne(customerId: string, req: NextApiRequest, res: NextApiResponse<T>): Promise<void | T> {
-    await this.methodProvider.initialize(req, res);
-    return await this.methodProvider.get(() => this.customerService.findOne(customerId));
+  async findOne(id: string): Promise<T> {
+    return await this.customerService.findOne(id);
   }
 
-  async createOne(
-    customerData: Customer,
-    req: NextApiRequest,
-    res: NextApiResponse<T>
-  ): Promise<void | T> {
-    await this.methodProvider.initialize(req, res);
-    return await this.methodProvider.post(() => this.customerService.createOne(customerData, req, res));
+  async createOne(bodyData: Customer): Promise<T> {
+    return await this.customerService.createOne(bodyData);
   }
 
   async createMany(
-    customersData: Customer[],
-    req: NextApiRequest,
-    res: NextApiResponse<T>
-  ): Promise<void | T> {
-    await this.methodProvider.initialize(req, res);
-    return await this.methodProvider.post(() => this.customerService.createMany(customersData, req, res));
+    bodyData: Customer[],
+  ): Promise<T> {
+    return await this.customerService.createMany(bodyData);
   }
 
   async updateOne(
-    customerId: string,
-    customerData: Customer,
-    req: NextApiRequest,
-    res: NextApiResponse<T>
+    id: string,
+    bodyData: Customer,
   ): Promise<void | T> {
-    await this.methodProvider.initialize(req, res);
-    return await this.methodProvider.put(() => this.customerService.updateOne(customerId, customerData));
+    return await this.customerService.updateOne(id, bodyData);
   }
 
   async updateMany(
-    customersId: string[],
-    customersData: Customer[],
-    req: NextApiRequest,
-    res: NextApiResponse<T>
+    ids: string[],
+    bodyData: Customer[],
   ): Promise<void | T> {
-    await this.methodProvider.initialize(req, res);
-    return await this.methodProvider.put(() => this.customerService.updateMany(customersId, customersData));
+    return await this.customerService.updateMany(ids, bodyData);
   }
 
-  async deleteOne(customerId: string, req: NextApiRequest, res: NextApiResponse<T>): Promise<void | DeleteResult> {
-    await this.methodProvider.initialize(req, res);
-    return await this.methodProvider.delete(() => this.customerService.deleteOne(customerId));
+  async deleteOne(id: string): Promise<void | T | DeleteResult> {
+    return await this.customerService.deleteOne(id);
   }
 
-  async deleteMany(customersId: string[], req: NextApiRequest, res: NextApiResponse<T>): Promise<void | DeleteResult> {
-    await this.methodProvider.initialize(req, res);
-    return await this.methodProvider.delete(() => this.customerService.deleteMany(customersId));
+  async deleteMany(ids: string[]): Promise<void | T> {
+    return await this.customerService.deleteMany(ids);
   }
 }
 

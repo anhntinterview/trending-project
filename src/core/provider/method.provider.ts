@@ -1,11 +1,13 @@
 import { Service } from 'typedi';
 import ApiOperationBase from './api-operation.base';
 import { DeleteResult } from 'typeorm';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { ErrorResponse, SuccessResponse } from './api-operation.abstract';
 
 @Service()
 class MethodProvider<T> extends ApiOperationBase<T> {
 
-  async get(callback: () => Promise<T>): Promise<void | T> {
+  async get(callback: () => Promise<void | T>) {
     if (this.req.method === 'GET') {
       return await callback();
     } else {
@@ -45,8 +47,8 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     }
   }
 
-  constructor() {
-    super();
+  constructor(req: NextApiRequest, res: NextApiResponse<SuccessResponse<T> | ErrorResponse>) {
+    super(req, res);
   }
 }
 

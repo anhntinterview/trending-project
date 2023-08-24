@@ -1,90 +1,89 @@
-import CustomerController from './customer.controller';
 import { Container } from 'typedi';
-import { CustomersDTO } from './customer.dto';
 import { NextApiRequest, NextApiResponse } from 'next';
-import ApiOperationProvider from '@/core/provider/api-operation.provider';
-import { isNotVoid } from '@/util/type';
+import CustomerController from '@/customer/customer.controller';
 import { Customer } from '@db/entity/customer.entity';
-import { CustomerAddress } from '@db/entity/customer-address.entity';
+import ApiOperationBase from '@/core/provider/api-operation.base';
+import ApiProvider from '@/core/provider/singleton/api.provider';
 
-class CustomerModule<T> {
+class CustomerModule<T> extends ApiOperationBase<T> {
+  constructor(protected readonly req: NextApiRequest, protected readonly res: NextApiResponse<T>) {
+    super(req, res);
+  }
+
   private customerController = Container.get(CustomerController<T>);
-  private readonly apiOperationProvider = Container.get(ApiOperationProvider<T>);
-
-  constructor(private readonly req: NextApiRequest, private readonly res: NextApiResponse<T>) {}
+  private readonly apiProvider = new ApiProvider<T>(this.req, this.res);
 
   async getAll() {
-    await this.apiOperationProvider.initialize(this.req, this.res);
-    if (isNotVoid<T>) {
-      await this.apiOperationProvider.execute(() => this.customerController.all(this.req, this.res) as Promise<T>);
-    }
+    await this.apiProvider.handleHttpRequestResponse(
+      'get', // method
+      () => this.customerController.all() // callback
+    );
   }
 
-  async getOne(customerId: string) {
-    await this.apiOperationProvider.initialize(this.req, this.res);
-    if (isNotVoid<T>) {
-      await this.apiOperationProvider.execute(
-        () => this.customerController.findOne(customerId, this.req, this.res) as Promise<T>
-      );
-    }
+  async getOne() {
+    await this.apiProvider.handleHttpRequestResponse(
+      'get', // method
+      (id) => this.customerController.findOne(id as string), // callback
+      true // hasParam
+    );
   }
 
-  async createOne(customerData: Customer) {
-    await this.apiOperationProvider.initialize(this.req, this.res);
-    if (isNotVoid<T>) {
-      await this.apiOperationProvider.execute(
-        () => this.customerController.createOne(customerData, this.req, this.res) as Promise<T>
-      );
-    }
+  async createOne() {
+    await this.apiProvider.handleHttpRequestResponse(
+      'post', // method
+      (undefined, bodyData) => this.customerController.createOne(bodyData as Customer), // callback
+      false, // hasParam
+      true, // hasBodyData
+      true // isValidate
+    );
   }
 
-  async createMany(customersData: Customer[], customerAddressesData: CustomerAddress[]) {
-    await this.apiOperationProvider.initialize(this.req, this.res);
-    if (isNotVoid<T>) {
-      await this.apiOperationProvider.execute(
-        () => this.customerController.createMany(customersData, this.req, this.res) as Promise<T>
-      );
-    }
+  async createMany() {
+    await this.apiProvider.handleHttpRequestResponse(
+      'post',
+      (undefined, bodyData) => this.customerController.createMany(bodyData as Customer[]), // callback
+      false, // hasParam
+      true, // hasBodyData
+      true, // isValidate
+    );
   }
 
-  async updateOne(customerId: string, customerData: Customer) {
-    await this.apiOperationProvider.initialize(this.req, this.res);
-    if (isNotVoid<T>) {
-      await this.apiOperationProvider.execute(
-        () => this.customerController.updateOne(customerId, customerData, this.req, this.res) as Promise<T>
-      );
-    }
+  async updateOne() {
+    await this.apiProvider.handleHttpRequestResponse(
+      'put', // method
+      (id, bodyData) => this.customerController.updateOne(id as string, bodyData as Customer), // callback
+      false, // hasParam
+      true, // hasBodyData
+      true // isValidate
+    );
   }
 
-  async updateMany(customersId: string[], customersData: Customer[]) {
-    await this.apiOperationProvider.initialize(this.req, this.res);
-    if (isNotVoid<T>) {
-      await this.apiOperationProvider.execute(
-        () => this.customerController.updateMany(customersId, customersData, this.req, this.res) as Promise<T>
-      );
-    }
+  async updateMany() {
+    await this.apiProvider.handleHttpRequestResponse(
+      'put', // method
+      (ids, bodyData) => this.customerController.updateMany(ids as Array<string>, bodyData as Customer[]), // callback
+      false, // hasParam
+      true, // hasBodyData
+      true // isValidate
+    );
   }
 
-  async deleteOne(customerId: string) {
-    await this.apiOperationProvider.initialize(this.req, this.res);
-    if (isNotVoid<T>) {
-      await this.apiOperationProvider.execute(
-        () => this.customerController.deleteOne(customerId, this.req, this.res) as Promise<T>
-      );
-    }
+  async deleteOne() {
+    await this.apiProvider.handleHttpRequestResponse(
+      'delete', // method
+      (id) => this.customerController.deleteOne(id as string), // callback
+      false, // hasParam
+      true, // hasBodyData
+    );
   }
 
   async deleteMany(customersId: string[]) {
-    await this.apiOperationProvider.initialize(this.req, this.res);
-    if (isNotVoid<T>) {
-      await this.apiOperationProvider.execute(
-        () => this.customerController.deleteMany(customersId, this.req, this.res) as Promise<T>
-      );
-    }
-  }
-
-  async main() {
-    await this.getAll();
+    await this.apiProvider.handleHttpRequestResponse(
+      'delete', // method
+      (ids) => this.customerController.deleteMany(ids as Array<string>), // callback
+      false, // hasParam
+      true, // hasBodyData
+    );
   }
 }
 
