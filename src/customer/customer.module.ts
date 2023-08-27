@@ -51,7 +51,7 @@ class CustomerModule<T> extends ApiOperationBase<T> {
   async updateOne() {
     await this.apiProvider.handleHttpRequestResponse(
       'put', // method
-      (id, bodyData) => this.customerController.updateOne(id as string, bodyData as Customer), // callback
+      (undefined, bodyData) => this.customerController.updateOne(bodyData as Customer), // callback
       false, // hasParam
       true, // hasBodyData
       true // isValidate
@@ -61,7 +61,7 @@ class CustomerModule<T> extends ApiOperationBase<T> {
   async updateMany() {
     await this.apiProvider.handleHttpRequestResponse(
       'put', // method
-      (ids, bodyData) => this.customerController.updateMany(ids as Array<string>, bodyData as Customer[]), // callback
+      (undefined, bodyData) => this.customerController.updateMany(bodyData as Customer[]), // callback
       false, // hasParam
       true, // hasBodyData
       true // isValidate
@@ -72,15 +72,14 @@ class CustomerModule<T> extends ApiOperationBase<T> {
     await this.apiProvider.handleHttpRequestResponse(
       'delete', // method
       (id) => this.customerController.deleteOne(id as string), // callback
-      false, // hasParam
-      true, // hasBodyData
+      true, // hasParam
     );
   }
 
-  async deleteMany(customersId: string[]) {
+  async deleteMany() {
     await this.apiProvider.handleHttpRequestResponse(
-      'delete', // method
-      (ids) => this.customerController.deleteMany(ids as Array<string>), // callback
+      'post', // method
+      (undefined, bodyData) => this.customerController.deleteMany(bodyData as string[]), // callback
       false, // hasParam
       true, // hasBodyData
     );

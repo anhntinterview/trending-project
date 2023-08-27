@@ -5,5 +5,5 @@ import { Customer } from '@db/entity/customer.entity';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Customer>) {
   const customerModule = new CustomerModule<Customer>(req, res);
-  await customerModule.deleteOne();
+  await customerModule.deleteMany();
 }

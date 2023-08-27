@@ -4,11 +4,12 @@ import { DeleteResult } from 'typeorm';
 import { AppDataSource } from '@root/data-source';
 import { ErrorResponse, SuccessResponse } from '@/core/provider/api-operation.abstract';
 import ApiOperationBase from '@/core/provider/api-operation.base';
+import { EntityError } from '@/util/type';
 
 @Service()
 class ApiOperationProvider<T> extends ApiOperationBase<T> {
   async execute(
-    callback: (bodyData?: T) => Promise<void | T | DeleteResult>
+    callback: (bodyData?: T) => Promise<void | T | DeleteResult | EntityError>
   ): Promise<void> {
     try {
       await AppDataSource.initialize();

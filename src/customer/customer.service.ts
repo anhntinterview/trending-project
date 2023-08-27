@@ -3,9 +3,9 @@ import { Customer } from '@db/entity/customer.entity';
 import { Service } from 'typedi';
 import { validate } from 'class-validator';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, In, Repository } from 'typeorm';
 import CustomerRepository from './customer.repository';
-import { MapErrorType } from '@/util/type';
+import { EntityError, MapErrorType } from '@/util/type';
 
 @Service()
 class CustomerService<T> {
@@ -41,36 +41,57 @@ class CustomerService<T> {
 
   // return type of Promise<Customer[]>
   async createMany(bodyData: Customer[]): Promise<T> {
-    return await this.customerRepository.save(bodyData) as T;
+    return (await this.customerRepository.save(bodyData)) as T;
   }
 
   // return type of Promise<Customer | undefined>
-  async updateOne(customerId: string, customerData: Customer): Promise<T | undefined> {
-    let toUpdate = await this.customerRepository.findOne({
-      where: { id: customerId },
-      relations: ['addresses']
+  async updateOne(bodyData: Customer): Promise<T | EntityError> {
+    // Step 1: Fetch the entity
+    const toUpdate = await this.customerRepository.findOne({
+      where: { id: bodyData.id }
     });
-    if (toUpdate) {
-      let updated = Object.assign(toUpdate, customerData);
-      return (await this.customerRepository.save(updated)) as T;
+
+    if (!toUpdate) {
+      return { errors: 'Query was failed!' }; // Entity not found
     }
+
+    // Step 2: Modify the entity
+    toUpdate.first_name = bodyData.first_name;
+    toUpdate.last_name = bodyData.last_name;
+    toUpdate.phone_number = bodyData.phone_number;
+    toUpdate.email = bodyData.email;
+    toUpdate.password_hash = bodyData.password_hash;
+    toUpdate.addresses = bodyData.addresses;
+
+    // Step 3: Save the entity
+    return (await this.customerRepository.save(toUpdate)) as T;
   }
 
-  async updateMany(customersId: string[], customersData: Customer[]): Promise<void> {
-    customersId.map(async (ci) => {
-      customersData.map(async (c) => {
-        return await this.updateOne(ci, c);
-      });
-    });
+  // return type of Promise<Customer[] | undefined | EntityError>
+  async updateMany(bodyData: Customer[]): Promise<T | EntityError | undefined> {
+    for (let i = 0; i < bodyData.length; i++) {
+      await this.updateOne(bodyData[i]);
+    }
+    const ids = bodyData.map((c) => c.id);
+    return (await this.customerRepository
+      .createQueryBuilder('customer')
+      .leftJoinAndSelect('customer.addresses', 'addresses')
+      .where('customer.id IN (:...ids)', { ids })
+      .getMany()) as T;
+    // return (await this.customerRepository.find({
+    //   where: {
+    //     id: In(ids)
+    //   }
+    // })) as T;
   }
 
   async deleteOne(id: string): Promise<DeleteResult> {
     return await this.customerRepository.delete({ id });
   }
 
-  async deleteMany(ids: string[]) {
-    ids.map(async (ci) => {
-      return await this.customerRepository.delete({ id: ci });
+  async deleteMany(ids: Array<string>): Promise<DeleteResult> {
+    return await this.customerRepository.delete({
+      id: In(ids)
     });
   }
 }

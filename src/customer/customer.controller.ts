@@ -2,7 +2,7 @@ import { Container, Service } from 'typedi';
 import { DeleteResult } from 'typeorm';
 import CustomerService from '@/customer/customer.service';
 import { Customer } from '@db/entity/customer.entity';
-
+import { EntityError } from '@/util/type';
 
 @Service()
 class CustomerController<T> {
@@ -11,7 +11,7 @@ class CustomerController<T> {
   constructor() {}
 
   async all(): Promise<T> {
-    return await  this.customerService.all();
+    return await this.customerService.all();
   }
 
   async findOne(id: string): Promise<T> {
@@ -22,31 +22,23 @@ class CustomerController<T> {
     return await this.customerService.createOne(bodyData);
   }
 
-  async createMany(
-    bodyData: Customer[],
-  ): Promise<T> {
+  async createMany(bodyData: Customer[]): Promise<T> {
     return await this.customerService.createMany(bodyData);
   }
 
-  async updateOne(
-    id: string,
-    bodyData: Customer,
-  ): Promise<void | T> {
-    return await this.customerService.updateOne(id, bodyData);
+  async updateOne(bodyData: Customer): Promise<T | EntityError> {
+    return await this.customerService.updateOne(bodyData);
   }
 
-  async updateMany(
-    ids: string[],
-    bodyData: Customer[],
-  ): Promise<void | T> {
-    return await this.customerService.updateMany(ids, bodyData);
+  async updateMany(bodyData: Customer[]): Promise<T | EntityError | undefined> {
+    return await this.customerService.updateMany(bodyData);
   }
 
   async deleteOne(id: string): Promise<void | T | DeleteResult> {
     return await this.customerService.deleteOne(id);
   }
 
-  async deleteMany(ids: string[]): Promise<void | T> {
+  async deleteMany(ids: string[]): Promise<void | T | DeleteResult> {
     return await this.customerService.deleteMany(ids);
   }
 }
