@@ -25,8 +25,8 @@ test('should fetch value from Table A exactly', async () => {
   let qbA = await tableARepo.createQueryBuilder('tableA').leftJoinAndSelect('tableA.tableBs', 'tableB');
 
   const countA = await qbA.getCount();
-  const tbAById = await qbA.where({ id: '0668a953-629f-4d07-9176-e7aa1dcc9f2e' }).getOne();
+  const tbAById = await qbA.where({ id: '81c9b3d2-1d7c-48a4-b185-48d9081e11be' }).getOne();
 
-  expect(countA).toBe(3);
-  expect(tbAById?.name).toBe('tableA2');
+  expect(countA).toBe(1);
+  expect(tbAById?.name).toBe('tableAC');
 });

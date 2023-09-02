@@ -9,7 +9,7 @@ import CustomerSessionService from '@/customer-session/customer-session.service'
 import { Repository } from 'typeorm';
 import { Customer } from '@db/entity/customer.entity';
 import CustomerRepository from '@/customer/customer.repository';
-import AuthMiddleware from './middleware/auth.middlware';
+import AuthMiddleware from './middleware/auth.middleware';
 
 export type LoginBodyData = {
   email: string;
@@ -22,10 +22,10 @@ class AuthModule<T> extends ApiOperationBase<T> {
   }
 
   private authController = Container.get(AuthController<T>);
-  private authMiddlware = new AuthMiddleware<T>(this.req, this.res);
+  private authMiddleware = new AuthMiddleware<T>(this.req, this.res);
 
   async login() {
-    await this.authMiddlware.login();
+    await this.authMiddleware.login();
   }
 }
 
