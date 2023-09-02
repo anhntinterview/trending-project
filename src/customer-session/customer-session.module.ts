@@ -1,43 +1,29 @@
 import { Container } from 'typedi';
 import { NextApiRequest, NextApiResponse } from 'next';
-import CustomerController from '@/customer/customer.controller';
-import { Customer } from '@db/entity/customer.entity';
+import CustomerSessionController from '@/customer-session/customer-session.controller';
 import ApiOperationBase from '@/core/provider/api-operation.base';
+import { CustomerSession } from '@db/entity/customer-session.entity';
 import ApiProvider from '@/core/provider/singleton/api.provider';
 
-export type GettingOneByAttribute = {
-  nameAttr: string,
-  valueAttr: string
-}
-
-class CustomerModule<T> extends ApiOperationBase<T> {
+class CustomerSessionModule<T> extends ApiOperationBase<T> {
   constructor(protected readonly req: NextApiRequest, protected readonly res: NextApiResponse<T>) {
     super(req, res);
   }
 
-  private customerController = Container.get(CustomerController<T>);
+  private customerSessionController = Container.get(CustomerSessionController<T>);
   private readonly apiProvider = new ApiProvider<T>(this.req, this.res);
-
-  async getOneByAttribute() {
-    await this.apiProvider.handleHttpRequestResponse(
-      'post', // method
-      (undefined, bodyData) => this.customerController.findOneByAttribute(bodyData as GettingOneByAttribute), // callback
-      false, // hasParam
-      true, // hasBodyData
-    );
-  }
 
   async getAll() {
     await this.apiProvider.handleHttpRequestResponse(
       'get', // method
-      () => this.customerController.all() // callback
+      () => this.customerSessionController.all() // callback
     );
   }
 
   async getOne() {
     await this.apiProvider.handleHttpRequestResponse(
       'get', // method
-      (id) => this.customerController.findOne(id as string), // callback
+      (id) => this.customerSessionController.findOne(id as string), // callback
       true // hasParam
     );
   }
@@ -45,7 +31,7 @@ class CustomerModule<T> extends ApiOperationBase<T> {
   async createOne() {
     await this.apiProvider.handleHttpRequestResponse(
       'post', // method
-      (undefined, bodyData) => this.customerController.createOne(bodyData as Customer), // callback
+      (undefined, bodyData) => this.customerSessionController.createOne(bodyData as CustomerSession), // callback
       false, // hasParam
       true, // hasBodyData
     );
@@ -54,7 +40,7 @@ class CustomerModule<T> extends ApiOperationBase<T> {
   async createMany() {
     await this.apiProvider.handleHttpRequestResponse(
       'post',
-      (undefined, bodyData) => this.customerController.createMany(bodyData as Customer[]), // callback
+      (undefined, bodyData) => this.customerSessionController.createMany(bodyData as CustomerSession[]), // callback
       false, // hasParam
       true, // hasBodyData
     );
@@ -63,7 +49,7 @@ class CustomerModule<T> extends ApiOperationBase<T> {
   async updateOne() {
     await this.apiProvider.handleHttpRequestResponse(
       'put', // method
-      (undefined, bodyData) => this.customerController.updateOne(bodyData as Customer), // callback
+      (undefined, bodyData) => this.customerSessionController.updateOne(bodyData as CustomerSession), // callback
       false, // hasParam
       true, // hasBodyData
     );
@@ -72,28 +58,29 @@ class CustomerModule<T> extends ApiOperationBase<T> {
   async updateMany() {
     await this.apiProvider.handleHttpRequestResponse(
       'put', // method
-      (undefined, bodyData) => this.customerController.updateMany(bodyData as Customer[]), // callback
+      (undefined, bodyData) => this.customerSessionController.updateMany(bodyData as CustomerSession[]), // callback
       false, // hasParam
       true, // hasBodyData
     );
   }
 
+  // DELETE Method Url: /api/customer-session/d?id=67162838-ced6-4708-80bf-da563d38045e
   async deleteOne() {
     await this.apiProvider.handleHttpRequestResponse(
       'delete', // method
-      (id) => this.customerController.deleteOne(id as string), // callback
-      true, // hasParam
+      (id) => this.customerSessionController.deleteOne(id as string), // callback
+      true // hasParam
     );
   }
 
   async deleteMany() {
     await this.apiProvider.handleHttpRequestResponse(
       'post', // method
-      (undefined, bodyData) => this.customerController.deleteMany(bodyData as string[]), // callback
+      (undefined, bodyData) => this.customerSessionController.deleteMany(bodyData as string[]), // callback
       false, // hasParam
-      true, // hasBodyData
+      true // hasBodyData
     );
   }
 }
 
-export default CustomerModule;
+export default CustomerSessionModule;

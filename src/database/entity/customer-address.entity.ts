@@ -1,9 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, CreateDateColumn, BeforeInsert } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { Customer } from './customer.entity';
+import { ICustomer } from '@/util/entity/ICustomer';
+import { ICustomerAddress } from '@/util/entity/ICustomerAddress';
 
 @Entity({ name: 'customer_address' })
-export class CustomerAddress {
+export class CustomerAddress implements ICustomerAddress {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -3,12 +3,17 @@ import { DeleteResult } from 'typeorm';
 import CustomerService from '@/customer/customer.service';
 import { Customer } from '@db/entity/customer.entity';
 import { EntityError } from '@/util/type';
+import { GettingOneByAttribute } from './customer.module';
 
 @Service()
 class CustomerController<T> {
   private customerService = Container.get(CustomerService<T>);
 
   constructor() {}
+
+  async findOneByAttribute(bodyData: GettingOneByAttribute): Promise<T> {
+    return await this.customerService.findOneByAttribute(bodyData) as T;
+  }
 
   async all(): Promise<T> {
     return await this.customerService.all();

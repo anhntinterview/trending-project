@@ -1,10 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, CreateDateColumn, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, CreateDateColumn, BeforeInsert, OneToMany, JoinColumn } from "typeorm";
 import { CustomerAddress } from './customer-address.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { IsEmail, IsNotEmpty } from 'class-validator';
+import { ICustomer } from "@/util/entity/ICustomer";
+import { CustomerSession } from "./customer-session.entity";
 
 @Entity({name: 'customer'})
-export class Customer {
+export class Customer implements ICustomer {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   
@@ -47,6 +49,9 @@ export class Customer {
 
   @ManyToMany(() => CustomerAddress, (address) => address.customers, { cascade: true })
   addresses: CustomerAddress[];
+
+  @ManyToMany(() => CustomerSession, (session) => session.customers)
+  sessions: CustomerSession[];
 
   @BeforeInsert()
   generateUUID() {

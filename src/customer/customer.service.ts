@@ -1,11 +1,9 @@
-import { CustomerAddress } from '@db/entity/customer-address.entity';
 import { Customer } from '@db/entity/customer.entity';
 import { Service } from 'typedi';
-import { validate } from 'class-validator';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { DeleteResult, In, Repository } from 'typeorm';
 import CustomerRepository from './customer.repository';
 import { EntityError, MapErrorType } from '@/util/type';
+import { GettingOneByAttribute } from './customer.module';
 
 @Service()
 class CustomerService<T> {
@@ -13,11 +11,25 @@ class CustomerService<T> {
 
   private customerRepository: Repository<Customer> = CustomerRepository;
 
+  // return type of Promise<Customer>
+  async findOneByAttribute(bodyData: GettingOneByAttribute) {
+    const { nameAttr, valueAttr } = bodyData;
+    // const customer = await this.customerRepository.findOne({ where: { [nameAttr]: valueAttr } });
+    const customer = await this.customerRepository
+      .createQueryBuilder('customer')
+      .leftJoinAndSelect('customer.addresses', 'addresses')
+      .leftJoinAndSelect('customer.sessions', 'sessions')
+      .where(`customer.${nameAttr} = :${nameAttr}`, { [nameAttr]: valueAttr })
+      .getOne();
+    return customer;
+  }
+
   // return type of Promise<CustomersDTO>
   async all(): Promise<T> {
     const qbCustomer = await this.customerRepository
       .createQueryBuilder('customer')
-      .leftJoinAndSelect('customer.addresses', 'addresses');
+      .leftJoinAndSelect('customer.addresses', 'addresses')
+      .leftJoinAndSelect('customer.sessions', 'sessions');
 
     const countCustomer = await qbCustomer.getCount();
     const listCustomer = await qbCustomer.getMany();
@@ -27,11 +39,12 @@ class CustomerService<T> {
 
   // return type of Promise<Customer>
   async findOne(id: string): Promise<T> {
-    return (await this.customerRepository
+    const customer = await this.customerRepository
       .createQueryBuilder('customer')
       .leftJoinAndSelect('customer.addresses', 'addresses')
       .where('customer.id = :id', { id })
-      .getOne()) as T;
+      .getOne();
+    return customer as T;
   }
 
   // return type of Promise<Customer>

@@ -8,9 +8,7 @@ import { EntityError } from '@/util/type';
 
 @Service()
 class ApiOperationProvider<T> extends ApiOperationBase<T> {
-  async execute(
-    callback: (bodyData?: T) => Promise<void | T | DeleteResult | EntityError>
-  ): Promise<void> {
+  async execute(callback: (bodyData?: T) => Promise<void | T | DeleteResult | EntityError>): Promise<void> {
     try {
       await AppDataSource.initialize();
       const result = await callback();
@@ -24,6 +22,11 @@ class ApiOperationProvider<T> extends ApiOperationBase<T> {
 
   private sendResponse(result: T): void {
     this.res.status(200).json(result);
+  }
+
+  sendSuccessResponse(message) {
+    this.res.status(400).json({ message });
+    return message;
   }
 
   sendErrorResponse(error): ErrorResponse {

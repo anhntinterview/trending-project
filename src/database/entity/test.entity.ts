@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, OneToMany, ManyToOne, JoinColumn } from "typeorm";
 
 @Entity({name: 'tableA'})
 export class TableA {
@@ -11,6 +11,9 @@ export class TableA {
   @ManyToMany(() => TableB, (tableB) => tableB.name, {cascade: true, eager: false})
   @JoinTable({name: 'tableA_tableB'})
   tableBs: TableB[];
+
+  @OneToMany(() => TableC, (tableC) => tableC.name)
+  tableCs: TableC[];
 
 }
 
@@ -25,6 +28,19 @@ export class TableB {
   @ManyToMany(() => TableA, (tableA) => tableA.name, {cascade: true, eager: false})
   @JoinTable({name: 'tableB_tableA'})
   tableAs: TableA[];
+
+}
+
+@Entity({name: 'tableC'})
+export class TableC {
+  @PrimaryGeneratedColumn('uuid')
+  id: number;
+
+  @Column({type: 'varchar', length: 100})
+  name: string;
+
+  @ManyToOne(() => TableA, (tableA) => tableA.name)
+  tableA: TableA;
 
 }
 
