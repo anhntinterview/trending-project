@@ -29,7 +29,7 @@ class ApiProvider<T> extends ApiOperationProvider<T> {
     if (param) {
       await this.methodProvider[method](() => this.execute(() => callback(param)));
     } else {
-      return this.sendErrorResponse({ message: 'id was not defined' });
+      return this.sendErrorResponse({ message: 'param was not defined' });
     }
   }
 
@@ -54,7 +54,7 @@ class ApiProvider<T> extends ApiOperationProvider<T> {
         }
         await this.methodProvider[method](() => this.execute(() => callback(bodyData)));
       } else {
-        const bodyDataErrors = await validate(bodyData as object);
+        const bodyDataErrors = await validate(bodyData);
         if (isValidate && bodyDataErrors.length > 0) {
           return this.sendErrorResponse({
             error: bodyDataErrors.map((err) => err.constraints)

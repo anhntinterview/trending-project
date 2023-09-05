@@ -14,6 +14,7 @@ import {
 } from '@/customer-session/customer-session.type';
 import moment from 'moment';
 import CustomerRepository from '@/customer/customer.repository';
+import { validate } from 'class-validator';
 
 export type JwtVerifyType = {
   sub: string;
@@ -35,29 +36,39 @@ class AuthMiddleware<T> extends ApiProvider<T> {
     await this.handleBodyDataResponse(
       'post',
       async (bodyData: LoginBodyDataValidation) => {
+        const validateBodyData = new LoginBodyDataValidation();
         const { email, password } = bodyData;
-        const customer = await this.customerService.findOneByAttribute({ nameAttr: 'email', valueAttr: email });
-        if (customer) {
-          const isValid = this.passwordConfig.validPassword(password, customer.hash, customer.salt);
-          const isActive = await this.securityConfig.isActive(email);
-          if (isActive) {
-            if (isValid) {
-              const tokenObject = await this.securityConfig.issueJWT(customer);
-              if (tokenObject) {
-                this.sendSuccessResponse(undefined, {
-                  success: true,
-                  token: tokenObject.token,
-                  expiresIn: tokenObject.expires
-                });
+        validateBodyData.password = password;
+        validateBodyData.email = email;
+        const singleRecordErrors = await validate(validateBodyData);
+        if (singleRecordErrors.length > 0) {
+          return this.sendErrorResponse({
+            error: singleRecordErrors.map((err) => err.constraints)
+          });
+        } else {
+          const customer = await this.customerService.findOneByAttribute({ nameAttr: 'email', valueAttr: email });
+          if (customer) {
+            const isValid = this.passwordConfig.validPassword(password, customer.hash, customer.salt);
+            const isActive = await this.securityConfig.isActive(email);
+            if (isActive) {
+              if (isValid) {
+                const tokenObject = await this.securityConfig.issueJWT(customer);
+                if (tokenObject) {
+                  this.sendSuccessResponse(undefined, {
+                    success: true,
+                    token: tokenObject.token,
+                    expiresIn: tokenObject.expires
+                  });
+                }
+              } else {
+                this.sendErrorResponse({ success: false, msg: 'you entered the wrong password' });
               }
             } else {
-              this.sendErrorResponse({ success: false, msg: 'you entered the wrong password' });
+              this.sendErrorResponse({ success: false, msg: 'your account is not actived' });
             }
           } else {
-            this.sendErrorResponse({ success: false, msg: 'your account is not actived' });
+            this.sendErrorResponse({ error: 'customer was not defined' });
           }
-        } else {
-          this.sendErrorResponse({ error: 'customer was not defined' });
         }
       },
       true // isValidate
@@ -75,10 +86,12 @@ class AuthMiddleware<T> extends ApiProvider<T> {
           // *** START Handle ExpiredTime
           const { sub, exp, iat } = verification;
           const currentTimestamp = new Date().getTime();
+          /*
           console.log(`exp: `, exp);
           console.log(`current`, currentTimestamp);
           console.log(`iat: `, iat);
           console.log(`exp > current`, exp > currentTimestamp);
+          */
           if (exp > currentTimestamp) {
             try {
               await this.restartDBConnection();

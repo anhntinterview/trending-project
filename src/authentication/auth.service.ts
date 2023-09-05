@@ -41,11 +41,17 @@ class AuthService<T> {
     newCustomer.addresses = bodyData.addresses ? bodyData.addresses : [];
     newCustomer.first_name = bodyData.first_name || '';
 
+    const hiddenPassword = password[0] + "*".repeat(password.length - 2) + password.slice(-1)
+
     return await this.customerService.createOne(newCustomer).then(() => {
       this.emailService.sendEmail(
-        'tuananh.nguyen.macpro@gmail.com',
+        bodyData.email,
+        // 'tuananh.nguyen.macpro@gmail.com',
         'Welcome to FreedomWalking Online',
-        `Please click to the link to active your account:
+        `Your account information:
+        USERNAME: ${bodyData.username}
+        PASSWORD: ${hiddenPassword}
+        Please click to the link to active your account:
         http://${process.env.DOMAIN}:${process.env.HOST_PORT}/api/auth/active-account?param=${newCustomer.email}
         `
       );

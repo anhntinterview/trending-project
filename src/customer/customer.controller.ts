@@ -24,7 +24,6 @@ class CustomerController<T> {
   }
 
   async createOne(bodyData: Customer): Promise<T> {
-    console.log(`bodyData: `,bodyData);
     return await this.customerService.createOne(bodyData);
   }
 
@@ -41,7 +40,6 @@ class CustomerController<T> {
   }
 
   async deleteOne(id: string): Promise<void | T | DeleteResult> {
-    console.log(`id: `,id);
     return await this.customerService.deleteOne(id);
   }
 

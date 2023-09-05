@@ -1,5 +1,6 @@
 import { CustomerAddress } from '@db/entity/customer-address.entity';
-import { IsBoolean, IsEmail, IsNotEmpty, IsObject, IsString, validate } from 'class-validator';
+import { IsArray, IsBoolean, IsEmail, IsNotEmpty, IsPhoneNumber, IsString, Matches, MinLength, ValidateNested, validate } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class RegisterBodyDataValidation {
   @IsNotEmpty()
@@ -16,6 +17,7 @@ export class RegisterBodyDataValidation {
 
   @IsNotEmpty()
   @IsString()
+  @IsPhoneNumber()
   phone_number: string;
 
   @IsEmail()
@@ -24,8 +26,11 @@ export class RegisterBodyDataValidation {
   email: string;
 
   @IsNotEmpty()
-  @IsNotEmpty()
   @IsString()
+  @MinLength(8, { message: 'Password must be at least 8 characters long' })
+  @Matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+    message: 'Password must contain at least one uppercase letter, one number, and one special character',
+  })
   password: string;
 
   @IsBoolean()
@@ -33,7 +38,9 @@ export class RegisterBodyDataValidation {
   @IsNotEmpty()
   active: boolean;
 
-  @IsObject()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CustomerAddress)
   addresses?: Array<CustomerAddress>;
 }
 export class LoginBodyDataValidation {
@@ -43,7 +50,10 @@ export class LoginBodyDataValidation {
   email: string;
 
   @IsNotEmpty()
-  @IsNotEmpty()
   @IsString()
+  @MinLength(8, { message: 'Password must be at least 8 characters long' })
+  @Matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+    message: 'Password must contain at least one uppercase letter, one number, and one special character',
+  })
   password: string;
 }

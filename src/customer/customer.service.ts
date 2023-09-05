@@ -17,13 +17,15 @@ class CustomerService<T> {
   async findOneByAttribute(bodyData: GetOneByAttribute) {
     const { nameAttr, valueAttr } = bodyData;
     const customer = await this.customerRepository.findOne({ where: { [nameAttr]: valueAttr } });
+    return customer;
+    
     // const customer = await this.customerRepository
     //   .createQueryBuilder('customer')
     //   .leftJoinAndSelect('customer.addresses', 'addresses')
     //   .leftJoinAndSelect('customer.sessions', 'sessions')
     //   .where(`customer.${nameAttr} = :${nameAttr}`, { [nameAttr]: valueAttr })
     //   .getOne();
-    return customer;
+    
   }
 
   // return type of Promise<CustomersDTO>

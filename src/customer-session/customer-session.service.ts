@@ -23,9 +23,7 @@ class CustomerSessionService<T> {
   async findOneByAttributeFromRelatedTable(bodyData: GetOneByAttribute) {
     const { valueAttr } = bodyData;
     const customer = await this.customerService.findOne(valueAttr);
-    console.log(`customer ---`, customer);
     const customerSession = customer?.sessions;
-    console.log(`customerSession ---`, customerSession);
     return customerSession;
   }
 

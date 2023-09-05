@@ -23,16 +23,16 @@ class ApiOperationProvider<T> extends ApiOperationBase<T> {
     }
   }
 
-  sendSuccessResponse(result: T | void, message?: unknown): void {
+  sendSuccessResponse(result: T | void, message?: { msg?: string, success?: boolean, token?: string, expiresIn?: string }): void {
     if (isNotVoid(result)) {
       this.res.status(200).json(result);
     } else {
-      this.successMessageResponse(message)
+      this.successMessageResponse(message);
     }
   }
 
   private successMessageResponse(message) {
-    this.res.status(200).json(message);
+    this.res.status(200).json({ message });
     return message;
   }
 
