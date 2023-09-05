@@ -1,22 +1,11 @@
 import { Container } from 'typedi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import AuthController from '@/authentication/auth.controller';
-import ApiOperationBase from '@/core/provider/api-operation.base';
+import AuthMiddleware from './auth.middleware';
 import ApiProvider from '@/core/provider/singleton/api.provider';
-import CookieService from '@/core/cookie/cookies.service';
-import CustomerService from '@/customer/customer.service';
-import CustomerSessionService from '@/customer-session/customer-session.service';
-import { Repository } from 'typeorm';
-import { Customer } from '@db/entity/customer.entity';
-import CustomerRepository from '@/customer/customer.repository';
-import AuthMiddleware from './middleware/auth.middleware';
+import { RegisterBodyDataValidation } from '@/authentication/auth.type';
 
-export type LoginBodyData = {
-  email: string;
-  password: string;
-};
-
-class AuthModule<T> extends ApiOperationBase<T> {
+class AuthModule<T> extends ApiProvider<T> {
   constructor(protected readonly req: NextApiRequest, protected readonly res: NextApiResponse<T>) {
     super(req, res);
   }
@@ -26,6 +15,25 @@ class AuthModule<T> extends ApiOperationBase<T> {
 
   async login() {
     await this.authMiddleware.login();
+  }
+
+  async register() {
+    await this.handleBodyDataResponse(
+      'post',
+      (bodyData: RegisterBodyDataValidation) => this.authController.register(bodyData),
+      true
+    );
+  }
+
+  async isAuth(callback: () => Promise<T>) {
+    await this.authMiddleware.verifyJWT(callback);
+  }
+
+  async verifyEmail() {
+    await this.handleUrlParamResponse(
+      'get',
+      (email: string) => this.authController.verifyEmail(email)
+    )
   }
 }
 

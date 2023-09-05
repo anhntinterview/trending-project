@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, CreateDateColumn, B
 import { CustomerAddress } from './customer-address.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { IsEmail, IsNotEmpty } from 'class-validator';
-import { ICustomer } from "@/util/entity/ICustomer";
+import { ICustomer } from "@root/type/entity/ICustomer";
 import { CustomerSession } from "./customer-session.entity";
 
 @Entity({name: 'customer'})
@@ -10,6 +10,10 @@ export class Customer implements ICustomer {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   
+  @Column({type: 'varchar', length: 100})
+  @IsNotEmpty()
+  username: string;
+
   @Column({type: 'varchar', length: 100})
   @IsNotEmpty()
   first_name: string;
@@ -29,7 +33,11 @@ export class Customer implements ICustomer {
 
   @Column({type: 'text'})
   @IsNotEmpty()
-  password_hash: string;
+  hash: string;
+
+  @Column({type: 'text'})
+  @IsNotEmpty()
+  salt: string;
 
   @Column({type: 'boolean'})
   @IsNotEmpty()
@@ -48,10 +56,10 @@ export class Customer implements ICustomer {
   updated_by: string;
 
   @ManyToMany(() => CustomerAddress, (address) => address.customers, { cascade: true })
-  addresses: CustomerAddress[];
+  addresses?: CustomerAddress[];
 
   @ManyToMany(() => CustomerSession, (session) => session.customers)
-  sessions: CustomerSession[];
+  sessions?: CustomerSession[];
 
   @BeforeInsert()
   generateUUID() {

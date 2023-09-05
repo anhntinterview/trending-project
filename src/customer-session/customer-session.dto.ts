@@ -1,4 +1,4 @@
-import { ICustomerSession } from '@/util/entity/ICustomerSession';
+import { ICustomerSession } from '@root/type/entity/ICustomerSession';
 
 export interface CustomersSessionDTO {
   list: Array<ICustomerSession>;

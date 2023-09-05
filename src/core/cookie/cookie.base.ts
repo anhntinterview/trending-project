@@ -9,13 +9,13 @@ class CookieBase<T, D> extends ApiOperationBase<T> {
   private sessionSecret = process.env.SESSION_SECRET;
   private IVLength = 16;
 
-  private _sessionName
+  private _sessionName;
 
-  get sessionName() : COOKIE_NAME | string {
-    return this._sessionName
+  get sessionName(): COOKIE_NAME | string {
+    return this._sessionName;
   }
 
-  set sessionName(v : COOKIE_NAME | string) {
+  set sessionName(v: COOKIE_NAME | string) {
     this._sessionName = v;
   }
 
@@ -41,9 +41,12 @@ class CookieBase<T, D> extends ApiOperationBase<T> {
     return decrypted.toString();
   }
 
-  protected setCookie(res: NextApiResponse<SuccessResponse<T> | ErrorResponse>, data: D, timer: number) {
+  protected setCookie(res: NextApiResponse<SuccessResponse<T> | ErrorResponse>, data: D, timer: number, path: string) {
     const encryptedData = this.encrypt(JSON.stringify(data));
-    res.setHeader('Set-Cookie', cookie.serialize(`session:${this.sessionName}`, encryptedData, { httpOnly: true, maxAge: timer }));
+    res.setHeader(
+      'Set-Cookie',
+      cookie.serialize(`session:${this.sessionName}`, encryptedData, { httpOnly: true, maxAge: timer, path })
+    );
   }
 
   protected getCookie(req: NextApiRequest) {

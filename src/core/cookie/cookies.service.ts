@@ -10,8 +10,8 @@ class CookieService<T, D> extends CookieBase<T, D> {
     super(req, res);
   }
 
-  public setSessionClientSide(data: D, timer: number) {
-    this.setCookie(this.res, data, timer);
+  public setSessionClientSide(data: D, timer: number, path: string) {
+    this.setCookie(this.res, data, timer, path);
     this.res.status(200).send({ message: 'cookies was set succeed!' });
   }
 }

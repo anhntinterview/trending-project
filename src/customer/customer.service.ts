@@ -1,26 +1,28 @@
 import { Customer } from '@db/entity/customer.entity';
-import { Service } from 'typedi';
+import Container, { Service } from 'typedi';
 import { DeleteResult, In, Repository } from 'typeorm';
 import CustomerRepository from './customer.repository';
-import { EntityError, MapErrorType } from '@/util/type';
-import { GettingOneByAttribute } from './customer.module';
+import { EntityError } from '@/util/type';
+import { GetOneByAttribute } from '@root/type/entity/common';
+import CustomerAddressService from '@/customer-address/customer-address.service';
 
 @Service()
 class CustomerService<T> {
   constructor() {}
 
   private customerRepository: Repository<Customer> = CustomerRepository;
+  private customerAddressService = Container.get(CustomerAddressService<T>);
 
   // return type of Promise<Customer>
-  async findOneByAttribute(bodyData: GettingOneByAttribute) {
+  async findOneByAttribute(bodyData: GetOneByAttribute) {
     const { nameAttr, valueAttr } = bodyData;
-    // const customer = await this.customerRepository.findOne({ where: { [nameAttr]: valueAttr } });
-    const customer = await this.customerRepository
-      .createQueryBuilder('customer')
-      .leftJoinAndSelect('customer.addresses', 'addresses')
-      .leftJoinAndSelect('customer.sessions', 'sessions')
-      .where(`customer.${nameAttr} = :${nameAttr}`, { [nameAttr]: valueAttr })
-      .getOne();
+    const customer = await this.customerRepository.findOne({ where: { [nameAttr]: valueAttr } });
+    // const customer = await this.customerRepository
+    //   .createQueryBuilder('customer')
+    //   .leftJoinAndSelect('customer.addresses', 'addresses')
+    //   .leftJoinAndSelect('customer.sessions', 'sessions')
+    //   .where(`customer.${nameAttr} = :${nameAttr}`, { [nameAttr]: valueAttr })
+    //   .getOne();
     return customer;
   }
 
@@ -38,13 +40,14 @@ class CustomerService<T> {
   }
 
   // return type of Promise<Customer>
-  async findOne(id: string): Promise<T> {
+  async findOne(id: string) {
     const customer = await this.customerRepository
       .createQueryBuilder('customer')
       .leftJoinAndSelect('customer.addresses', 'addresses')
+      .leftJoinAndSelect('customer.sessions', 'sessions')
       .where('customer.id = :id', { id })
       .getOne();
-    return customer as T;
+    return customer;
   }
 
   // return type of Promise<Customer>
@@ -69,11 +72,14 @@ class CustomerService<T> {
     }
 
     // Step 2: Modify the entity
+    toUpdate.username = bodyData.username;
     toUpdate.first_name = bodyData.first_name;
     toUpdate.last_name = bodyData.last_name;
     toUpdate.phone_number = bodyData.phone_number;
+    toUpdate.active = bodyData.active;
     toUpdate.email = bodyData.email;
-    toUpdate.password_hash = bodyData.password_hash;
+    toUpdate.hash = bodyData.hash;
+    toUpdate.salt = bodyData.salt;
     toUpdate.addresses = bodyData.addresses;
 
     // Step 3: Save the entity
@@ -98,8 +104,16 @@ class CustomerService<T> {
     // })) as T;
   }
 
-  async deleteOne(id: string): Promise<DeleteResult> {
-    return await this.customerRepository.delete({ id });
+  async deleteOne(id: string) {
+    const customer = await this.findOne(id);
+    if (customer) {
+      const customerAddresses = customer.addresses;
+      if (customerAddresses) {
+        const cdIds = customerAddresses?.map((item) => item.id);
+        this.customerAddressService.deleteMany(cdIds);
+      }
+      return await this.customerRepository.delete({ id });
+    }
   }
 
   async deleteMany(ids: Array<string>): Promise<DeleteResult> {

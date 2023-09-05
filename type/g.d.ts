@@ -2,6 +2,11 @@ import 'babel-polyfill';
 import 'ts-helpers';
 
 declare global {
-    interface Window {
-    }
+  interface Window {}
+}
+
+declare module 'next' {
+  interface NextApiRequest {
+    jwt: string;
+  }
 }

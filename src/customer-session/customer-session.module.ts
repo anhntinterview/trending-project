@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import CustomerSessionController from '@/customer-session/customer-session.controller';
 import ApiOperationBase from '@/core/provider/api-operation.base';
 import { CustomerSession } from '@db/entity/customer-session.entity';
-import ApiProvider from '@/core/provider/singleton/api.provider';
+import ApiProvider, { APIParameterType } from '@/core/provider/singleton/api.provider';
 
 class CustomerSessionModule<T> extends ApiOperationBase<T> {
   constructor(protected readonly req: NextApiRequest, protected readonly res: NextApiResponse<T>) {
@@ -24,7 +24,7 @@ class CustomerSessionModule<T> extends ApiOperationBase<T> {
     await this.apiProvider.handleHttpRequestResponse(
       'get', // method
       (id) => this.customerSessionController.findOne(id as string), // callback
-      true // hasParam
+      APIParameterType.URL_PARAM
     );
   }
 
@@ -32,8 +32,7 @@ class CustomerSessionModule<T> extends ApiOperationBase<T> {
     await this.apiProvider.handleHttpRequestResponse(
       'post', // method
       (undefined, bodyData) => this.customerSessionController.createOne(bodyData as CustomerSession), // callback
-      false, // hasParam
-      true, // hasBodyData
+      APIParameterType.BODY_DATA
     );
   }
 
@@ -41,8 +40,7 @@ class CustomerSessionModule<T> extends ApiOperationBase<T> {
     await this.apiProvider.handleHttpRequestResponse(
       'post',
       (undefined, bodyData) => this.customerSessionController.createMany(bodyData as CustomerSession[]), // callback
-      false, // hasParam
-      true, // hasBodyData
+      APIParameterType.BODY_DATA
     );
   }
 
@@ -50,8 +48,7 @@ class CustomerSessionModule<T> extends ApiOperationBase<T> {
     await this.apiProvider.handleHttpRequestResponse(
       'put', // method
       (undefined, bodyData) => this.customerSessionController.updateOne(bodyData as CustomerSession), // callback
-      false, // hasParam
-      true, // hasBodyData
+      APIParameterType.BODY_DATA
     );
   }
 
@@ -59,8 +56,7 @@ class CustomerSessionModule<T> extends ApiOperationBase<T> {
     await this.apiProvider.handleHttpRequestResponse(
       'put', // method
       (undefined, bodyData) => this.customerSessionController.updateMany(bodyData as CustomerSession[]), // callback
-      false, // hasParam
-      true, // hasBodyData
+      APIParameterType.BODY_DATA
     );
   }
 
@@ -69,7 +65,7 @@ class CustomerSessionModule<T> extends ApiOperationBase<T> {
     await this.apiProvider.handleHttpRequestResponse(
       'delete', // method
       (id) => this.customerSessionController.deleteOne(id as string), // callback
-      true // hasParam
+      APIParameterType.URL_PARAM
     );
   }
 
@@ -77,8 +73,7 @@ class CustomerSessionModule<T> extends ApiOperationBase<T> {
     await this.apiProvider.handleHttpRequestResponse(
       'post', // method
       (undefined, bodyData) => this.customerSessionController.deleteMany(bodyData as string[]), // callback
-      false, // hasParam
-      true // hasBodyData
+      APIParameterType.BODY_DATA
     );
   }
 }

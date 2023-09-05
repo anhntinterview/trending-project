@@ -7,3 +7,4 @@ temp/
 .next/
 .env.development.local
 .env.production.local
+id_rsa_priv.pem

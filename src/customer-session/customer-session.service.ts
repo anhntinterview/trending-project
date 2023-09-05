@@ -4,50 +4,70 @@ import CustomerSessionRepository from './customer-session.repository';
 import { EntityError } from '@/util/type';
 import { CustomerSession } from '@db/entity/customer-session.entity';
 import CookieService from '@/core/cookie/cookies.service';
-import { ICustomerSession } from '@/util/entity/ICustomerSession';
+import { ICustomerSession } from '@root/type/entity/ICustomerSession';
 import { CreateOneByCustomerIdBodyDataType } from './customer-session.type';
+import { GetOneByAttribute } from '@root/type/entity/common';
+import CustomerRepository from '@/customer/customer.repository';
+import { Customer } from '@db/entity/customer.entity';
+import CustomerService from '@/customer/customer.service';
 
 @Service()
 class CustomerSessionService<T> {
   constructor() {}
 
   private customerSessionRepository: Repository<CustomerSession> = CustomerSessionRepository;
-
+  private customerService = Container.get(CustomerService<T>);
   private cookieService = Container.get(CookieService);
 
+  // return type of Promise<CustomerSession>
+  async findOneByAttributeFromRelatedTable(bodyData: GetOneByAttribute) {
+    const { valueAttr } = bodyData;
+    const customer = await this.customerService.findOne(valueAttr);
+    console.log(`customer ---`, customer);
+    const customerSession = customer?.sessions;
+    console.log(`customerSession ---`, customerSession);
+    return customerSession;
+  }
+
+  // return type of Promise<CustomerSession>
+  async findOneByAttribute(bodyData: GetOneByAttribute) {
+    const { nameAttr, valueAttr } = bodyData;
+    const customerSession = await this.customerSessionRepository
+      .createQueryBuilder('customer_session')
+      .leftJoinAndSelect('customer_session.customers', 'customers')
+      .where(`customer_session.${nameAttr} = :${nameAttr}`, { [nameAttr]: valueAttr })
+      .getOne();
+    return customerSession;
+  }
+
   async createOneByCustomerId(bodyData: CreateOneByCustomerIdBodyDataType): Promise<T> {
-    const { sessionName, customer, timer } = bodyData;
+    const { customer, timer, path } = bodyData;
     const customerId = customer.id;
     const currentTime = new Date();
     const expiredDate = new Date(currentTime.getTime() + timer * 1000);
     this.cookieService.sessionName = this.cookieService.generateRandomToken();
     const customerSession: ICustomerSession = {
-      name: `session:${sessionName}`,
-      value: JSON.stringify({ customerId, currentTime, expiredDate }),
+      value: JSON.stringify({ customerId, currentTime, expiredDate, path }),
       customers: [customer]
     };
 
     await this.createOne(customerSession);
 
-    const reFetchCustomerSession = await this.customerSessionRepository
-      .createQueryBuilder('customer_session')
-      .leftJoinAndSelect('customer_session.customers', 'customers')
-      .where('customer_session.name = :name', { name: `session:${sessionName}` })
-      .getOne();
+    const reFetchCustomer = await this.customerService.findOne(customerId);
 
-    return reFetchCustomerSession as T;
+    return reFetchCustomer as T;
   }
 
   // return type of Promise<CustomersDTO>
-  async all(): Promise<T> {
+  async all() {
     const qbCustomer = await this.customerSessionRepository
       .createQueryBuilder('customer_session')
       .leftJoinAndSelect('customer_session.customers', 'customers');
 
-    const countCustomer = await qbCustomer.getCount();
-    const listCustomer = await qbCustomer.getMany();
+    const customerSessionCount = await qbCustomer.getCount();
+    const customerSessionList = await qbCustomer.getMany();
 
-    return { countCustomer, listCustomer } as T;
+    return { customerSessionCount, customerSessionList };
   }
 
   // return type of Promise<Customer>
@@ -82,7 +102,6 @@ class CustomerSessionService<T> {
     }
 
     // Step 2: Modify the entity
-    toUpdate.name = bodyData.name;
     toUpdate.value = bodyData.value;
 
     // Step 3: Save the entity

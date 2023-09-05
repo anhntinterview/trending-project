@@ -5,6 +5,15 @@ import ApiOperationProvider from '@/core/provider/api-operation.provider';
 import MethodProvider from '@/core/provider/method.provider';
 import { EntityError } from '@/util/type';
 
+export enum APIParameterType {
+  BODY_DATA = 'bodyData',
+  URL_PARAM = 'urlParam',
+  BOTH = 'both'
+}
+
+// B: BodyDataType
+// R: ResultType
+
 class ApiProvider<T> extends ApiOperationProvider<T> {
   protected readonly methodProvider = new MethodProvider<T>(this.req, this.res);
 
@@ -14,11 +23,11 @@ class ApiProvider<T> extends ApiOperationProvider<T> {
 
   public async handleUrlParamResponse(
     method: string,
-    callback: (id: undefined | string | Array<string>) => Promise<void | T | DeleteResult | EntityError>
+    callback: (param: undefined | string | Array<string>) => Promise<void | T | DeleteResult | EntityError>
   ) {
-    const { id } = this.req.query;
-    if (id) {
-      await this.methodProvider[method](() => this.execute(() => callback(id)));
+    const { param } = this.req.query;
+    if (param) {
+      await this.methodProvider[method](() => this.execute(() => callback(param)));
     } else {
       return this.sendErrorResponse({ message: 'id was not defined' });
     }
@@ -26,7 +35,7 @@ class ApiProvider<T> extends ApiOperationProvider<T> {
 
   public async handleBodyDataResponse(
     method: string,
-    callback: (bodyData: T | string | Array<T> ) => Promise<void | T | DeleteResult | EntityError>,
+    callback: (bodyData: unknown) => Promise<void | T | DeleteResult | EntityError>,
     isValidate: boolean
   ) {
     const { bodyData } = this.req.body;
@@ -43,7 +52,7 @@ class ApiProvider<T> extends ApiOperationProvider<T> {
             }
           });
         }
-        await this.methodProvider[method](() => this.execute(() => callback(bodyData as T)));
+        await this.methodProvider[method](() => this.execute(() => callback(bodyData)));
       } else {
         const bodyDataErrors = await validate(bodyData as object);
         if (isValidate && bodyDataErrors.length > 0) {
@@ -63,17 +72,19 @@ class ApiProvider<T> extends ApiOperationProvider<T> {
     method: string,
     callback: (
       id?: undefined | string | Array<string>,
-      bodyData?: T | string | Array<T>
+      bodyData?: unknown
     ) => Promise<void | T | DeleteResult | EntityError>,
-    hasParam?: boolean,
-    hasBodyData?: boolean,
+    APIParameter?: APIParameterType
+    // hasParam?: boolean,
+    // hasBodyData?: boolean,
   ) {
-    if (hasParam) {
-      await this.handleUrlParamResponse(method, (id) => callback(id))
-    } else if (hasBodyData) {
-      await this.handleBodyDataResponse(method, (bodyData) => callback(undefined, bodyData), true);
-    } else {
-      await this.methodProvider[method](() => this.execute(() => callback()));
+    switch (APIParameter) {
+      case APIParameterType.BODY_DATA:
+        return await this.handleBodyDataResponse(method, (bodyData) => callback(undefined, bodyData), true);
+      case APIParameterType.URL_PARAM:
+        return await this.handleUrlParamResponse(method, (id) => callback(id))
+      default:
+        return await this.methodProvider[method](() => this.execute(() => callback()));
     }
   }
 }

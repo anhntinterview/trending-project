@@ -2,16 +2,12 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, BeforeInsert,
 import { Customer } from './customer.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { IsNotEmpty } from 'class-validator';
-import { ICustomerSession } from '@/util/entity/ICustomerSession';
+import { ICustomerSession } from '@root/type/entity/ICustomerSession';
 
 @Entity({ name: 'customer_session' })
 export class CustomerSession implements ICustomerSession {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ type: 'varchar', length: 500 })
-  @IsNotEmpty()
-  name: string;
 
   @Column({ type: 'varchar', length: 500 })
   @IsNotEmpty()

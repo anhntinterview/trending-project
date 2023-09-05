@@ -19,7 +19,7 @@ export const AppDataSource = new DataSource({
   // entities: ["src/database/entity/**/*.ts"],
   entities: [Customer, TableA, TableB, TableC, LabEntity, CustomerSession, CustomerAddress],
   migrations: [],
-  subscribers: []
+  subscribers: [],
 });
 
 // export const AppDataSource = new DataSource({
