@@ -67,7 +67,7 @@ class CustomerSessionService<T> {
     const customerSessionCount = await qbCustomer.getCount();
     const customerSessionList = await qbCustomer.getMany();
 
-    return { customerSessionCount, customerSessionList };
+    return { customerSessionCount, customerSessionList } as T;
   }
 
   // return type of Promise<Customer>

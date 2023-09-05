@@ -13,7 +13,7 @@ class AuthService<T> {
   private passwordConfig = Container.get(PasswordConfig);
   private emailService = Container.get(EmailService);
 
-  async verifyEmail(bodyData: GetOneByAttribute) {
+  async activeAccount(bodyData: GetOneByAttribute) {
     const updateCustomer = await this.customerService.findOneByAttribute(bodyData);
     if (updateCustomer) {
       updateCustomer.active = true;
@@ -46,14 +46,14 @@ class AuthService<T> {
         'tuananh.nguyen.macpro@gmail.com',
         'Welcome to FreedomWalking Online',
         `Please click to the link to active your account:
-        http://${process.env.DOMAIN}:${process.env.HOST_PORT}/api/auth/verify-email?param=${newCustomer.email}
+        http://${process.env.DOMAIN}:${process.env.HOST_PORT}/api/auth/active-account?param=${newCustomer.email}
         `
       );
     });
   }
 
-  async verifyEmailExist(customerId: string) {
-    const customer = await this.customerService.findOne(customerId);
+  async verifyExistedEmail(bodyData: GetOneByAttribute) {
+    const customer = await this.customerService.findOneByAttribute(bodyData);
     return customer ? true : false;
   }
 

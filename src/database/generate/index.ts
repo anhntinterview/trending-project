@@ -34,7 +34,6 @@ export const CustomerSessionGen = async () => {
   const currentTime = new Date();
   const expiredDate = new Date(currentTime.getTime() + timer * 1000);
   if(customer) {
-    customerSession.name = `session:001`;
     customerSession.value = JSON.stringify({
       customerId: '09d47117-bf73-4cb3-86ff-68fdfba05091',
       maxAge: timer,
@@ -136,7 +135,6 @@ export const CustomerCustomerAddress = async () => {
     customer.email = getRandomEmail();
     customer.active = true;
     customer.phone_number = getRandomPhoneNumber();
-    customer.password_hash = generatePassword();
     customer.created_at = new Date();
     customer.updated_at = new Date();
 

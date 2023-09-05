@@ -35,7 +35,7 @@ class ApiProvider<T> extends ApiOperationProvider<T> {
 
   public async handleBodyDataResponse(
     method: string,
-    callback: (bodyData: unknown) => Promise<void | T | DeleteResult | EntityError>,
+    callback: (bodyData: unknown) => Promise<void | T | DeleteResult | EntityError >,
     isValidate: boolean
   ) {
     const { bodyData } = this.req.body;

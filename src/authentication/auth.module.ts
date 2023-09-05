@@ -20,7 +20,15 @@ class AuthModule<T> extends ApiProvider<T> {
   async register() {
     await this.handleBodyDataResponse(
       'post',
-      (bodyData: RegisterBodyDataValidation) => this.authController.register(bodyData),
+      async (bodyData: RegisterBodyDataValidation) => {
+        const { email } = bodyData;
+        const isEmailExisted = await this.authController.verifyExistedEmail(email);
+        if (isEmailExisted) {
+          this.sendErrorResponse({ error: 'Email was existed' });
+        } else {
+          return this.authController.register(bodyData);
+        }
+      },
       true
     );
   }
@@ -29,11 +37,8 @@ class AuthModule<T> extends ApiProvider<T> {
     await this.authMiddleware.verifyJWT(callback);
   }
 
-  async verifyEmail() {
-    await this.handleUrlParamResponse(
-      'get',
-      (email: string) => this.authController.verifyEmail(email)
-    )
+  async activeAccount() {
+    await this.handleUrlParamResponse('get', (email: string) => this.authController.activeAccount(email));
   }
 }
 

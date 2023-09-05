@@ -14,61 +14,6 @@ class CustomerAddressModule<T> extends ApiOperationBase<T> {
   private customerAddressController = Container.get(CustomerAddressController<T>);
   private readonly apiProvider = new ApiProvider<T>(this.req, this.res);
 
-  async getOneByAttribute() {
-    return await this.apiProvider.handleHttpRequestResponse(
-      'post', // method
-      (undefined, bodyData) => this.customerAddressController.findOneByAttribute(bodyData as GetOneByAttribute), // callback
-      APIParameterType.BODY_DATA
-    );
-  }
-
-  async getAll() {
-    return await this.apiProvider.handleHttpRequestResponse(
-      'get', // method
-      () => this.customerAddressController.all() // callback
-    );
-  }
-
-  async getOne() {
-    return await this.apiProvider.handleHttpRequestResponse(
-      'get', // method
-      (id) => this.customerAddressController.findOne(id as string), // callback
-      APIParameterType.URL_PARAM
-    );
-  }
-
-  async createOne() {
-    return await this.apiProvider.handleHttpRequestResponse(
-      'post', // method
-      (undefined, bodyData: CustomerAddress) => this.customerAddressController.createOne(bodyData), // callback
-      APIParameterType.BODY_DATA
-    );
-  }
-
-  async createMany() {
-    return await this.apiProvider.handleHttpRequestResponse(
-      'post',
-      (undefined, bodyData: CustomerAddress[]) => this.customerAddressController.createMany(bodyData), // callback
-      APIParameterType.BODY_DATA
-    );
-  }
-
-  async updateOne() {
-    return await this.apiProvider.handleHttpRequestResponse(
-      'put', // method
-      (undefined, bodyData: CustomerAddress) => this.customerAddressController.updateOne(bodyData), // callback
-      APIParameterType.BODY_DATA
-    );
-  }
-
-  async updateMany() {
-    return await this.apiProvider.handleHttpRequestResponse(
-      'put', // method
-      (undefined, bodyData: CustomerAddress[]) => this.customerAddressController.updateMany(bodyData), // callback
-      APIParameterType.BODY_DATA
-    );
-  }
-
   async deleteOne() {
     return await this.apiProvider.handleHttpRequestResponse(
       'delete', // method

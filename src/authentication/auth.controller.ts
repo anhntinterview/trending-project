@@ -7,20 +7,24 @@ import { GetOneByAttribute } from '@root/type/entity/common';
 class AuthController<T> {
   private authService = Container.get(AuthService<T>);
 
-  async verifyEmail(email: string) {
+  async activeAccount(email: string) {
     const bodyData: GetOneByAttribute = {
       nameAttr: 'email',
       valueAttr: email
     };
-    await this.authService.verifyEmail(bodyData);
+    await this.authService.activeAccount(bodyData);
   }
 
-  async register(bodyData: RegisterBodyDataValidation): Promise<T> {
+  async register(bodyData: RegisterBodyDataValidation): Promise<void> {
     return await this.authService.register(bodyData);
   }
 
-  async verifyEmailExist(customerId: string) {
-    return await this.authService.verifyEmailExist(customerId);
+  async verifyExistedEmail(email: string): Promise<boolean> {
+    const bodyData: GetOneByAttribute = {
+      nameAttr: 'email',
+      valueAttr: email
+    };
+    return await this.authService.verifyExistedEmail(bodyData);
   }
 
   constructor() {}

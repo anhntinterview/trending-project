@@ -5,6 +5,6 @@ import { useRouter } from 'next/router';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const authModule = new AuthModule(req, res);
-  await authModule.verifyEmail();
+  await authModule.activeAccount();
   res.redirect('/');
 }
