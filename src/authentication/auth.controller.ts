@@ -1,6 +1,6 @@
 import { Container, Service } from 'typedi';
 import AuthService from '@/authentication/auth.service';
-import { LoginBodyDataValidation, RegisterBodyDataValidation } from '@/authentication/auth.type';
+import { RegisterBodyDataValidation } from '@/authentication/auth.type';
 import { GetOneByAttribute } from '@root/type/entity/common';
 
 @Service()

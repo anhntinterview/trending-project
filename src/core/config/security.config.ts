@@ -7,8 +7,8 @@ import { GetOneByAttribute } from '@root/type/entity/common';
 import CustomerService from '@/customer/customer.service';
 
 // List security technical includes:
-// 1. Authenticate: Passport
-// 2. Authenticate: jsonwebtoken
+// 1. Crypto keyPair
+// 2. jsonwebtoken
 
 export type JwtPayloadType = {
   sub: string;

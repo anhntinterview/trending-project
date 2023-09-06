@@ -4,17 +4,11 @@ import jwt from 'jsonwebtoken';
 import CustomerService from '@/customer/customer.service';
 import MethodProvider from '@/core/provider/method.provider';
 import PasswordConfig from '@/core/config/password.config';
-import { LoginBodyDataValidation } from '@/authentication/auth.type';
+import { LoginBodyDataValidation, RegisterBodyDataValidation } from '@/authentication/auth.type';
 import ApiProvider from '@/core/provider/singleton/api.provider';
 import SecurityConfig from '@/core/config/security.config';
-import CustomerSessionService from '@/customer-session/customer-session.service';
-import {
-  CreateOneByCustomerIdBodyDataType,
-  CustomerSessionValueAttrType
-} from '@/customer-session/customer-session.type';
-import moment from 'moment';
-import CustomerRepository from '@/customer/customer.repository';
 import { validate } from 'class-validator';
+import AuthController from './auth.controller';
 
 export type JwtVerifyType = {
   sub: string;
@@ -31,6 +25,43 @@ class AuthMiddleware<T> extends ApiProvider<T> {
   private passwordConfig = Container.get(PasswordConfig);
   private securityConfig = Container.get(SecurityConfig<T>);
   private customerService = Container.get(CustomerService<T>);
+  private authController = Container.get(AuthController<T>);
+
+  public async register() {
+    await this.handleBodyDataResponse(
+      'post',
+      async (bodyData: RegisterBodyDataValidation) => {
+        const validateBodyData = new RegisterBodyDataValidation();
+        const { username, first_name, last_name, phone_number, active, addresses, email, password } = bodyData;
+        const isEmailExisted = await this.authController.verifyExistedEmail(email);
+        validateBodyData.username = username;
+        validateBodyData.first_name = first_name;
+        validateBodyData.last_name = last_name;
+        validateBodyData.phone_number = phone_number;
+        validateBodyData.active = active;
+        validateBodyData.addresses = addresses;
+        validateBodyData.password = password;
+        validateBodyData.email = email;
+        const singleRecordErrors = await validate(validateBodyData);
+        if (singleRecordErrors.length > 0) {
+          return this.sendErrorResponse({
+            error: singleRecordErrors.map((err) => err.constraints)
+          });
+        } else {
+          if (isEmailExisted) {
+            this.sendErrorResponse({ error: 'Email was existed' });
+          } else {
+            await this.authController.register(bodyData).then(() => {
+              this.sendSuccessResponse(undefined, {
+                msg: 'The account was created successfully. Please access email and follow the instructions'
+              });
+            });
+          }
+        }
+      },
+      true
+    );
+  }
 
   public async login() {
     await this.handleBodyDataResponse(
@@ -109,7 +140,7 @@ class AuthMiddleware<T> extends ApiProvider<T> {
           }
           // *** END Handle ExpiredTime
         } catch (err) {
-          return this.sendErrorResponse({ success: false, msg: 'You are not authorized to visit this route' });
+          return this.sendErrorResponse({ success: false, msg: err });
         }
       } else {
         return this.sendErrorResponse({ success: false, msg: 'You are not authorized to visit this route' });
@@ -117,6 +148,10 @@ class AuthMiddleware<T> extends ApiProvider<T> {
     } else {
       return this.sendErrorResponse({ success: false, msg: 'You are not authorized to visit this route' });
     }
+  }
+
+  async activeAccount() {
+    await this.handleUrlParamResponse('get', (email: string) => this.authController.activeAccount(email))
   }
 }
 
