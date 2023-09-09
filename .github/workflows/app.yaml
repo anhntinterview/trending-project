@@ -40,6 +40,8 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Generate Keypair
+        run: yarn gen:keypair
       # https://nx.dev/packages/nx/documents/run-many
       - name: Build
         run: yarn build

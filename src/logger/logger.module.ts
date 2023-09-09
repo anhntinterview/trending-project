@@ -1,29 +1,22 @@
-import LoggerController from './logger.controller';
 import { Container } from 'typedi';
 import { NextApiRequest, NextApiResponse } from 'next';
-import ApiOperationProvider from '@/core/provider/api-operation.provider';
+import ApiOperationBase from '@/core/provider/api-operation.base';
+import LoggerController from '@/logger/logger.controller';
+import ApiProvider from '@/core/provider/singleton/api.provider';
 
-function isNotVoid<T>(value: T | void): value is T {
-  return value !== undefined;
-}
-
-class LoggerModule<T> {
-  constructor(private readonly req: NextApiRequest,private readonly res: NextApiResponse<T>) {}
-  
-  private loggerController = Container.get(LoggerController<T>);
-  private readonly apiOperationProvider = Container.get(ApiOperationProvider<T>);
-
-  async getEnvironment() {
-    await this.apiOperationProvider.initialize(this.req, this.res);
-    if(isNotVoid<T>){
-      await this.apiOperationProvider.execute(
-        () => this.loggerController.environment(this.req, this.res) as Promise<T>
-      );
-    }
+class LoggerModule<T> extends ApiOperationBase<T> {
+  constructor(protected readonly req: NextApiRequest, protected readonly res: NextApiResponse<T>) {
+    super(req, res);
   }
 
-  async main() {
-    await this.getEnvironment();
+  private loggerController = Container.get(LoggerController<T>);
+  private readonly apiProvider = new ApiProvider<T>(this.req, this.res);
+
+  async getEnvironment() {
+    await this.apiProvider.handleHttpRequestResponse(
+      'get', // method
+      () => this.loggerController.environment() // callback
+    );
   }
 }
 

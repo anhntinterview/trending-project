@@ -1,33 +1,52 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, CreateDateColumn, BeforeInsert, OneToMany, JoinColumn } from "typeorm";
 import { CustomerAddress } from './customer-address.entity';
+import { v4 as uuidv4 } from 'uuid';
+import { IsEmail, IsNotEmpty } from 'class-validator';
+import { ICustomer } from "@root/type/entity/ICustomer";
+import { CustomerSession } from "./customer-session.entity";
 
 @Entity({name: 'customer'})
-export class Customer {
+export class Customer implements ICustomer {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
+  
+  @Column({type: 'varchar', length: 100})
+  @IsNotEmpty()
+  username: string;
 
   @Column({type: 'varchar', length: 100})
+  @IsNotEmpty()
   first_name: string;
 
   @Column({type: 'varchar', length: 100})
+  @IsNotEmpty()
   last_name: string;
 
   @Column({type: 'varchar', length: 100})
+  @IsNotEmpty()
   phone_number: string;
 
   @Column({ unique: true, type: 'text' })
+  @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @Column({type: 'text'})
-  password_hash: string;
+  @IsNotEmpty()
+  hash: string;
+
+  @Column({type: 'text'})
+  @IsNotEmpty()
+  salt: string;
 
   @Column({type: 'boolean'})
+  @IsNotEmpty()
   active: boolean;
 
-  @Column({type: 'timestamptz'})
+  @CreateDateColumn({type: 'timestamptz'})
   created_at: Date;
 
-  @Column({type: 'timestamptz'})
+  @CreateDateColumn({type: 'timestamptz'})
   updated_at: Date;
 
   @Column({type: 'uuid', generated: "uuid"})
@@ -36,6 +55,15 @@ export class Customer {
   @Column({type: 'uuid', generated: "uuid"})
   updated_by: string;
 
-  @ManyToMany(() => CustomerAddress, (address) => address.customer)
-  addresses: CustomerAddress[];
+  @ManyToMany(() => CustomerAddress, (address) => address.customers, { cascade: true })
+  addresses?: CustomerAddress[];
+
+  @ManyToMany(() => CustomerSession, (session) => session.customers)
+  sessions?: CustomerSession[];
+
+  @BeforeInsert()
+  generateUUID() {
+    this.created_by = uuidv4();
+    this.updated_by = uuidv4();
+  }
 }

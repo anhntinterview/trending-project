@@ -54,7 +54,7 @@
     "**/*.tsx",
     "next.config.js",
     ".next/types/**/*.ts"
-  ],
+, "type/entity"  ],
   "exclude": [
     "node_modules"
   ]

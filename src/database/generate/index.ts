@@ -15,7 +15,60 @@ import { Tag } from '@db/entity/tag.entity';
 import { Customer } from '@db/entity/customer.entity';
 import { CustomerAddress } from '@db/entity/customer-address.entity';
 import { cityName, countryList, nameList } from '@/ultilize/const';
-import { TableA, TableB } from '@db/entity/test.entity';
+import { TableA, TableB, TableC } from '@db/entity/test.entity';
+import { CustomerSession } from '@db/entity/customer-session.entity';
+
+export const CustomerSessionGen = async () => {
+  // const record = await AppDataSource.manager.findOne(CustomerSession, {
+  //   where: {
+  //     id: '8195fefa-3ca1-4e02-9c24-bc01bbb6cecc'
+  //   }
+  // })
+  // await AppDataSource.manager.remove(record);
+  // ---
+  const customer = await AppDataSource.manager.findOne(Customer, {
+    where: { id : '09d47117-bf73-4cb3-86ff-68fdfba05091'}
+  })
+  const customerSession = new CustomerSession();
+  const timer = 3600;
+  const currentTime = new Date();
+  const expiredDate = new Date(currentTime.getTime() + timer * 1000);
+  if(customer) {
+    customerSession.value = JSON.stringify({
+      customerId: '09d47117-bf73-4cb3-86ff-68fdfba05091',
+      maxAge: timer,
+      currentTime,
+      expiredDate
+    });
+    // customerSession.customer = customer
+    await AppDataSource.manager.save(customerSession);
+  } else {
+    console.log(`customer was not defined`);
+  }
+  
+};
+
+export const TestGen2 = async () => {
+  const tableC1 = new TableC();
+  const tableC2 = new TableC();
+  const tableA = new TableA();
+
+  tableA.name = 'tableAC';
+  tableC1.name = 'tableC1A';
+  tableC2.name = 'tableC2A';
+
+  tableC1.tableA = tableA;
+  tableC2.tableA = tableA
+
+  tableA.tableCs = [tableC1, tableC2];
+
+  await AppDataSource.manager.save(tableA);
+  await AppDataSource.manager.save(tableC1);
+  await AppDataSource.manager.save(tableC2);
+
+  console.log(`==============`, await AppDataSource.manager.find(TableA, { relations: ['tableCs'] }));
+  console.log(`==============`, await AppDataSource.manager.find(TableC, { relations: ['tableA'] }));
+};
 
 export const TestGen = async () => {
   const tableB = new TableB();
@@ -30,8 +83,8 @@ export const TestGen = async () => {
   await AppDataSource.manager.save(tableA);
   await AppDataSource.manager.save(tableB);
 
-  console.log(`==============`, await AppDataSource.manager.find(TableA, {relations: ["tableBs"]}));
-  console.log(`==============`, await AppDataSource.manager.find(TableB, {relations: ["tableAs"]}));
+  console.log(`==============`, await AppDataSource.manager.find(TableA, { relations: ['tableBs'] }));
+  console.log(`==============`, await AppDataSource.manager.find(TableB, { relations: ['tableAs'] }));
 };
 
 export const ProductTag = async () => {
@@ -82,7 +135,6 @@ export const CustomerCustomerAddress = async () => {
     customer.email = getRandomEmail();
     customer.active = true;
     customer.phone_number = getRandomPhoneNumber();
-    customer.password_hash = generatePassword();
     customer.created_at = new Date();
     customer.updated_at = new Date();
 
@@ -109,6 +161,7 @@ AppDataSource.initialize()
   .then(async () => {
     // await ProductTag();
     // await CustomerCustomerAddress();
-    await TestGen();
+    // await TestGen();
+    await TestGen2();
   })
   .catch((error) => console.log(error));
