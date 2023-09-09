@@ -8,3 +8,4 @@ temp/
 .env.development.local
 .env.production.local
 id_rsa_priv.pem
+id_rsa_pub.pem

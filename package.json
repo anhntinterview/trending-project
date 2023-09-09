@@ -8,6 +8,7 @@
       "start": "next start -p 4000",
       "test": "npx jest",
       "gen:db": "ts-node ./src/database/generate/index.ts",
+      "gen:keypair": "node generateKeypair.js",
       "lint": "next lint",
       "typeorm": "typeorm-ts-node-commonjs",
       "db:setup": "yarn db:create:dev && yarn db:create:test",
