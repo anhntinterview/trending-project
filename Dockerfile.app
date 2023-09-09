@@ -6,6 +6,8 @@ COPY ./package.json ./yarn.* ./
 RUN yarn install --frozen-lockfile
 COPY . /app
 
+RUN yarn gen:keypair
+
 RUN yarn build
 
 ENV NODE_ENV="production"
