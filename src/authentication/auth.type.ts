@@ -1,6 +1,13 @@
 import { CustomerAddress } from '@db/entity/customer-address.entity';
 import { IsArray, IsBoolean, IsEmail, IsNotEmpty, IsPhoneNumber, IsString, Matches, MinLength, ValidateNested, validate } from 'class-validator';
 import { Type } from 'class-transformer';
+import { Role } from '@db/entity/role.entity';
+
+export type JwtVerifyType = {
+  sub: string;
+  iat: number;
+  exp: number;
+};
 
 export class RegisterBodyDataValidation {
   @IsNotEmpty()
@@ -42,6 +49,11 @@ export class RegisterBodyDataValidation {
   @ValidateNested({ each: true })
   @Type(() => CustomerAddress)
   addresses?: Array<CustomerAddress>;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Role)
+  roles?: Array<Role>;
 }
 export class LoginBodyDataValidation {
   @IsEmail()

@@ -4,6 +4,9 @@ import { DataSource } from 'typeorm';
 import { Customer } from '@db/entity/customer.entity';
 import { CustomerAddress } from '@db/entity/customer-address.entity';
 import { CustomerSession } from '@db/entity/customer-session.entity';
+import { Role } from '@db/entity/role.entity';
+import { Post } from '@db/entity/post.entity';
+import { Tag } from '@db/entity/tag.entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -17,9 +20,9 @@ export const AppDataSource = new DataSource({
   // entities: [path.join(__dirname, './src/database/entity/*.*')],
   // entities: [__dirname + "src/database/entity/**/*.ts"],
   // entities: ["src/database/entity/**/*.ts"],
-  entities: [Customer, TableA, TableB, TableC, LabEntity, CustomerSession, CustomerAddress],
+  entities: [Customer, TableA, TableB, TableC, LabEntity, CustomerAddress, Role, Post, Tag],
   migrations: [],
-  subscribers: [],
+  subscribers: []
 });
 
 // export const AppDataSource = new DataSource({

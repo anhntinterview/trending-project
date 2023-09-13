@@ -1,33 +1,30 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
-import {Product} from './product.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, CreateDateColumn } from 'typeorm';
+import { ITag } from '@root/type/entity/ITag';
+import { Post } from './post.entity';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 @Entity({name: 'tag'})
-export class Tag {
+export class Tag implements ITag{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'varchar', length: 255 })
-  tag_name: string;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
   @Column({ type: 'text'})
+  @IsString()
+  @IsNotEmpty()
   icon: string;
 
-  @Column({type: 'timestamptz'})
+  @CreateDateColumn({type: 'timestamptz'})
   created_at: Date;
 
-  @Column({type: 'timestamptz'})
+  @CreateDateColumn({type: 'timestamptz'})
   updated_at: Date;
 
-  @Column({type: 'uuid', generated: "uuid"})
-  created_by: string;
-
-  @Column({type: 'uuid', generated: "uuid"})
-  updated_by: string;
-
-  @Column()
-  estimate_days: number;
-
-  @ManyToMany(() => Product, (product) => product.tags)
+  @ManyToMany(() => Post, (post) => post.tags)
   @JoinTable()
-  products: Product[];
+  posts?: Post[];
 }

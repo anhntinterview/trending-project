@@ -1,7 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, CreateDateColumn, BeforeInsert } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 import { Customer } from './customer.entity';
-import { ICustomer } from '@root/type/entity/ICustomer';
 import { ICustomerAddress } from '@root/type/entity/ICustomerAddress';
 
 @Entity({ name: 'customer_address' })
@@ -33,19 +31,7 @@ export class CustomerAddress implements ICustomerAddress {
   @CreateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  @Column({ type: 'uuid', generated: 'uuid' })
-  created_by: string;
-
-  @Column({ type: 'uuid', generated: 'uuid' })
-  updated_by: string;
-
   @ManyToMany(() => Customer, (customer) => customer.addresses)
   @JoinTable()
   customers?: Customer[];
-
-  @BeforeInsert()
-  generateUUID() {
-    this.created_by = uuidv4();
-    this.updated_by = uuidv4();
-  }
 }

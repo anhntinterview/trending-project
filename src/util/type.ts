@@ -3,4 +3,4 @@ export function isNotVoid<T>(value: T | void): value is T {
 }
 export type MapErrorType = { errors: ({ [type: string]: string } | undefined)[] };
 
-export type EntityError = { errors: string };
+export type MessageType = { [type: string]: string | boolean }

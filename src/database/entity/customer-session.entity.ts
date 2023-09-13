@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, BeforeInsert, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
-import { Customer } from './customer.entity';
-import { v4 as uuidv4 } from 'uuid';
+// import { Customer } from './customer.entity';
 import { IsNotEmpty } from 'class-validator';
 import { ICustomerSession } from '@root/type/entity/ICustomerSession';
 
@@ -19,19 +18,7 @@ export class CustomerSession implements ICustomerSession {
   @CreateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  @Column({ type: 'uuid', generated: 'uuid' })
-  created_by: string;
-
-  @Column({ type: 'uuid', generated: 'uuid' })
-  updated_by: string;
-
-  @ManyToMany(() => Customer, (customer) => customer.sessions, { cascade: true })
-  @JoinTable()
-  customers?: Customer[]
-
-  @BeforeInsert()
-  generateUUID() {
-    this.created_by = uuidv4();
-    this.updated_by = uuidv4();
-  }
+  // @ManyToMany(() => Customer, (customer) => customer.sessions, { cascade: true })
+  // @JoinTable()
+  // customers?: Customer[]
 }

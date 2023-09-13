@@ -1,88 +1,54 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { DeleteResult } from 'typeorm';
-import { validate } from 'class-validator';
 import ApiOperationProvider from '@/core/provider/api-operation.provider';
 import MethodProvider from '@/core/provider/method.provider';
-import { EntityError } from '@/util/type';
+import { APIMethodType, APIParameterType } from '@root/type/entity/common';
 
-export enum APIParameterType {
-  BODY_DATA = 'bodyData',
-  URL_PARAM = 'urlParam',
-  BOTH = 'both'
-}
-
-// B: BodyDataType
-// R: ResultType
-
-class ApiProvider<T> extends ApiOperationProvider<T> {
-  protected readonly methodProvider = new MethodProvider<T>(this.req, this.res);
-
-  constructor(protected readonly req: NextApiRequest, protected readonly res: NextApiResponse<T>) {
+class ApiProvider extends ApiOperationProvider {
+  constructor(req: NextApiRequest, res: NextApiResponse) {
     super(req, res);
   }
 
+  protected readonly methodProvider = new MethodProvider(this.req, this.res);
+
   public async handleUrlParamResponse(
-    method: string,
-    callback: (param: undefined | string | Array<string>) => Promise<void | T | DeleteResult | EntityError>
+    method: APIMethodType,
+    callback: (param: undefined | string | Array<string>) => Promise<unknown>
   ) {
     const { param } = this.req.query;
     if (param) {
       await this.methodProvider[method](() => this.execute(() => callback(param)));
     } else {
-      return this.sendErrorResponse({ message: 'param was not defined' });
+      this.errorResponse = { message: 'param was not defined' };
+      return this.sendErrorResponse();
     }
   }
 
   public async handleBodyDataResponse(
-    method: string,
-    callback: (bodyData: unknown) => Promise<void | T | DeleteResult | EntityError >,
-    isValidate: boolean
+    method: APIMethodType,
+    callback: (bodyData: unknown) => Promise<unknown>
   ) {
     const { bodyData } = this.req.body;
-    
     if (bodyData) {
-      if (Array.isArray(bodyData)) {
-        if (isValidate) {
-          bodyData.map(async (item) => {
-            const singleRecordErrors = await validate(item as object);
-            if (singleRecordErrors.length > 0) {
-              return this.sendErrorResponse({
-                error: singleRecordErrors.map((err) => err.constraints)
-              });
-            }
-          });
-        }
-        await this.methodProvider[method](() => this.execute(() => callback(bodyData)));
-      } else {
-        const bodyDataErrors = await validate(bodyData);
-        if (isValidate && bodyDataErrors.length > 0) {
-          return this.sendErrorResponse({
-            error: bodyDataErrors.map((err) => err.constraints)
-          });
-        } else {
-          await this.methodProvider[method](() => this.execute(() => callback(bodyData)));
-        }
-      }
+      await this.methodProvider[method](() => this.execute(() => callback(bodyData)));
     } else {
-      return this.sendErrorResponse({ error: 'bodyData was not defined' });
+      this.errorResponse = { error: 'bodyData was not defined' };
+      return this.sendErrorResponse();
     }
   }
 
   public async handleHttpRequestResponse(
-    method: string,
+    method: APIMethodType,
     callback: (
       id?: undefined | string | Array<string>,
       bodyData?: unknown
-    ) => Promise<void | T | DeleteResult | EntityError>,
+    ) => Promise<unknown>,
     APIParameter?: APIParameterType
-    // hasParam?: boolean,
-    // hasBodyData?: boolean,
   ) {
     switch (APIParameter) {
       case APIParameterType.BODY_DATA:
-        return await this.handleBodyDataResponse(method, (bodyData) => callback(undefined, bodyData), true);
+        return await this.handleBodyDataResponse(method, (bodyData) => callback(undefined, bodyData));
       case APIParameterType.URL_PARAM:
-        return await this.handleUrlParamResponse(method, (id) => callback(id))
+        return await this.handleUrlParamResponse(method, (id) => callback(id));
       default:
         return await this.methodProvider[method](() => this.execute(() => callback()));
     }

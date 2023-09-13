@@ -2,12 +2,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import AuthMiddleware from './auth.middleware';
 import ApiProvider from '@/core/provider/singleton/api.provider';
 
-class AuthModule<T> extends ApiProvider<T> {
-  constructor(protected readonly req: NextApiRequest, protected readonly res: NextApiResponse<T>) {
+class AuthModule<T> extends ApiProvider {
+  constructor(req: NextApiRequest, res: NextApiResponse<T>) {
     super(req, res);
   }
 
-  private authMiddleware = new AuthMiddleware<T>(this.req, this.res);
+  private authMiddleware = new AuthMiddleware(this.req, this.res);
 
   async login() {
     await this.authMiddleware.login();

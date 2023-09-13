@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, CreateDateColumn, BeforeInsert, OneToMany, JoinColumn } from "typeorm";
 import { CustomerAddress } from './customer-address.entity';
-import { v4 as uuidv4 } from 'uuid';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { ICustomer } from "@root/type/entity/ICustomer";
-import { CustomerSession } from "./customer-session.entity";
+// import { CustomerSession } from "./customer-session.entity";
+import { Role } from "./role.entity";
 
 @Entity({name: 'customer'})
 export class Customer implements ICustomer {
@@ -49,21 +49,12 @@ export class Customer implements ICustomer {
   @CreateDateColumn({type: 'timestamptz'})
   updated_at: Date;
 
-  @Column({type: 'uuid', generated: "uuid"})
-  created_by: string;
-
-  @Column({type: 'uuid', generated: "uuid"})
-  updated_by: string;
-
   @ManyToMany(() => CustomerAddress, (address) => address.customers, { cascade: true })
   addresses?: CustomerAddress[];
 
-  @ManyToMany(() => CustomerSession, (session) => session.customers)
-  sessions?: CustomerSession[];
+  // @ManyToMany(() => CustomerSession, (session) => session.customers)
+  // sessions?: CustomerSession[];
 
-  @BeforeInsert()
-  generateUUID() {
-    this.created_by = uuidv4();
-    this.updated_by = uuidv4();
-  }
+  @ManyToMany(() => Role, (role) => role.customers, { cascade: true })
+  roles?: Role[];
 }

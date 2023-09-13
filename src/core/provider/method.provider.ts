@@ -5,9 +5,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { ErrorResponse, SuccessResponse } from './api-operation.abstract';
 
 @Service()
-class MethodProvider<T> extends ApiOperationBase<T> {
+class MethodProvider extends ApiOperationBase {
 
-  async get(callback: () => Promise<void | T>) {
+  async get(callback: () => Promise<unknown>) {
     if (this.req.method === 'GET') {
       return await callback();
     } else {
@@ -15,7 +15,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     }
   }
 
-  async post(callback: () => Promise<void | T>): Promise<void | T>  {
+  async post(callback: () => Promise<unknown>)  {
     if (this.req.method === 'POST') {
       return await callback();
     } else {
@@ -23,7 +23,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     }
   }
 
-  async put(callback: () => Promise<void | T>): Promise<void | T>  {
+  async put(callback: () => Promise<unknown>) {
     if (this.req.method === 'PUT') {
       return await callback();
     } else {
@@ -31,7 +31,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     }
   }
 
-  async patch(callback: () => Promise<void | T>): Promise<void | T>  {
+  async patch(callback: () => Promise<unknown>)  {
     if (this.req.method === 'PATCH') {
       return await callback();
     } else {
@@ -39,7 +39,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     }
   }
 
-  async delete(callback: () => Promise<void | DeleteResult>): Promise<void | DeleteResult>  {
+  async delete(callback: () => Promise<unknown>)  {
     if (this.req.method === 'DELETE') {
       return await callback();
     } else {
@@ -47,7 +47,7 @@ class MethodProvider<T> extends ApiOperationBase<T> {
     }
   }
 
-  constructor(req: NextApiRequest, res: NextApiResponse<SuccessResponse<T> | ErrorResponse>) {
+  constructor(req: NextApiRequest, res: NextApiResponse) {
     super(req, res);
   }
 }

@@ -48,7 +48,7 @@ export class Product {
   @Column({type: 'uuid', generated: "uuid"})
   updated_by: string;
 
-  @ManyToMany(() => Tag, (tag) => tag.products)
-  tags: Tag[];
+  // @ManyToMany(() => Tag, (tag) => tag.products)
+  // tags: Tag[];
 
 }
