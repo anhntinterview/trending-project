@@ -14,7 +14,7 @@ class TagMiddleware extends ApiProvider {
   constructor(req: NextApiRequest, res: NextApiResponse) {
     super(req, res);
   }
-  private crudService = new CRUDService(TagRepository, PostRepository, 'tag', 'tags');
+  private crudService = new CRUDService(TagRepository, PostRepository, 'tag', 'posts');
 
   async isExistedTag(name: string) {
     const isExistedTag = await this.crudService.findOneByAttribute({ nameAttr: 'name', valueAttr: name });

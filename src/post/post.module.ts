@@ -5,7 +5,7 @@ import PostRepository from '@/post/post.repository';
 import TagRepository from '@/tag/tag.repository';
 import { CustomeObjectLiteral } from '@root/type/entity/common';
 import CRUDMiddleware from '@/core/service/crud/crud.middleware';
-import { PostBodyDataValidation } from './post.type';
+import { PostBodyDataValidation } from '@/post/post.type';
 import { Post } from '@db/entity/post.entity';
 
 class PostModule<Post extends CustomeObjectLiteral, Tag extends CustomeObjectLiteral> extends ApiProvider {
