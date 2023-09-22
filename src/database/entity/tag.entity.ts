@@ -13,11 +13,6 @@ export class Tag implements ITag{
   @IsNotEmpty()
   name: string;
 
-  @Column({ type: 'text'})
-  @IsString()
-  @IsNotEmpty()
-  icon: string;
-
   @CreateDateColumn({type: 'timestamptz'})
   created_at: Date;
 

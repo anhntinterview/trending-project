@@ -6,6 +6,7 @@ import ApiProvider from '@/core/provider/singleton/api.provider';
 import CRUDService from '@/core/service/crud/crud.service';
 
 import { APIMethodType } from '@root/type/entity/common';
+import slugify from 'slugify';
 
 @Service()
 class CRUDMiddleware<T extends EntityTarget<ObjectLiteral>, F extends EntityTarget<ObjectLiteral>> extends ApiProvider {
@@ -41,7 +42,7 @@ class CRUDMiddleware<T extends EntityTarget<ObjectLiteral>, F extends EntityTarg
     return isExistedPost ? true : false;
   }
 
-  async validate(
+  async implementValidate(
     validateBodyData: object, // const validateBodyData = new ValidateObjectEntity()
     bodyData: object,
     callback: () => Promise<unknown>
@@ -55,6 +56,9 @@ class CRUDMiddleware<T extends EntityTarget<ObjectLiteral>, F extends EntityTarg
       }
     }
     const errors = await validate(validateBodyData);
+    errors.map((err) => {
+      console.log(`err: `, err);
+    });
     if (errors.length > 0) {
       errors.map((err) => {
         this.errorResponse = err.constraints;
@@ -69,7 +73,13 @@ class CRUDMiddleware<T extends EntityTarget<ObjectLiteral>, F extends EntityTarg
     return await this.handleBodyDataResponse(
       APIMethodType.POST, // method
       async (bodyData: object) => {
-        await this.validate(validateBodyData, bodyData, async () => {
+        await this.implementValidate(validateBodyData, bodyData, async () => {
+          const isPost = bodyData['tags'].find((item) => item.name === 'post');
+          if (isPost) {
+            newEntity['slug'] = slugify(bodyData['title']);
+            newEntity['created_by'] = bodyData['customerId'];
+            newEntity['updated_by'] = '';
+          }
           for (const key in bodyData) {
             if (bodyData.hasOwnProperty(key)) {
               newEntity[key] = bodyData[key];

@@ -16,7 +16,7 @@ class PostModule<Post extends CustomeObjectLiteral, Tag extends CustomeObjectLit
   public crudModule = new CRUDModule<Post, Tag>(this.req, this.res, PostRepository, TagRepository, 'post', 'tags');
   public crudMiddleware = new CRUDMiddleware<Post, Tag>(this.req, this.res, PostRepository, TagRepository, 'post', 'tags');
   
-  async createOne() {
+  async createOneWithMiddlware() {
     return await this.crudMiddleware.createOne(new PostBodyDataValidation(), new Post());
   }
 }

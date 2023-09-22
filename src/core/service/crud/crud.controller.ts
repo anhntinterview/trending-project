@@ -36,7 +36,7 @@ class CRUDController<T extends EntityTarget<ObjectLiteral>, F extends EntityTarg
   }
 
   async findOne(id: string) {
-    await this.entityService.findOne(id);
+    return await this.entityService.findOne(id);
   }
 
   async createOne(bodyData: ObjectLiteral) {

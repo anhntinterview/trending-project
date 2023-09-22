@@ -44,7 +44,7 @@ class CRUDService<T extends EntityTarget<ObjectLiteral>, F extends EntityTarget<
       .createQueryBuilder(this.entityTable)
       .leftJoinAndSelect(`${this.entityTable}.${this.constraintTable}`, `${this.constraintTable}`)
       .where(`${this.entityTable}.id = :id`, { id })
-      .getOne();
+      .getOne()
     return queryEntity;
   }
 

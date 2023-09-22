@@ -9,10 +9,11 @@ class CRUDModule<T extends EntityTarget<ObjectLiteral>, F extends EntityTarget<O
   private entityTable: string;
   private repository: Repository<ObjectLiteral>;
   private constraintRepository: Repository<ObjectLiteral>;
-  private entityController: CRUDController<T,F>
+  private entityController: CRUDController<T, F>;
 
   constructor(
-    req: NextApiRequest, res: NextApiResponse,
+    req: NextApiRequest,
+    res: NextApiResponse,
     repository: Repository<ObjectLiteral>,
     constraintRepository: Repository<ObjectLiteral>,
     entityTable: string,

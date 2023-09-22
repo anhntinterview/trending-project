@@ -8,10 +8,14 @@ abstract class ApiOperationBase extends AbstractApiOperation {
   }
 
   protected async initializeDBConnection() {
-    try {
-      await AppDataSource.initialize();
-    } catch (error) {
-      console.error(`Error of Database Connection: `, error);
+    if (!AppDataSource.isInitialized) {
+      try {
+        await AppDataSource.initialize();
+      } catch (error) {
+        console.error(`Error of Database Connection: `, error);
+      }
+    } else {
+      console.log('App is not close');
     }
   }
 

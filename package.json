@@ -20,11 +20,13 @@
       "local": "DOTENV_CONFIG_PATH=./.env ts-node -P ./tsconfig.yarn.json -r dotenv/config"
    },
    "dependencies": {
+      "@google-cloud/text-to-speech": "^5.0.1",
       "apollo-server": "^3.12.1",
       "autoprefixer": "10.4.14",
       "class-transformer": "^0.5.1",
       "class-validator": "^0.14.0",
       "cookie": "^0.5.0",
+      "cors": "^2.8.5",
       "cross-env": "^7.0.3",
       "crypto": "^1.0.1",
       "dotenv": "^16.0.3",

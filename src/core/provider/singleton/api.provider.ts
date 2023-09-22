@@ -15,10 +15,11 @@ class ApiProvider extends ApiOperationProvider {
     callback: (param: undefined | string | Array<string>) => Promise<unknown>
   ) {
     const { param } = this.req.query;
-    if (param) {
-      await this.methodProvider[method](() => this.execute(() => callback(param)));
+    const { id } = this.req.query;
+    if (param || id) {
+      await this.methodProvider[method](() => this.execute(() => callback(param || id)));
     } else {
-      this.errorResponse = { message: 'param was not defined' };
+      this.errorResponse = { message: 'param or id was not defined' };
       return this.sendErrorResponse();
     }
   }
