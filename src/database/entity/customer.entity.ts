@@ -22,6 +22,10 @@ export class Customer implements ICustomer {
   @IsNotEmpty()
   last_name: string;
 
+  @Column({ type: 'text' })
+  @IsNotEmpty()
+  avatar: string;
+
   @Column({type: 'varchar', length: 100})
   @IsNotEmpty()
   phone_number: string;
