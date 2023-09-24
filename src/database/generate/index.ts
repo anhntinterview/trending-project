@@ -90,11 +90,9 @@ export const TestGen = async () => {
 export const ProductTag = async () => {
   for (let i = 0; i < 10; i++) {
     const tag = new Tag();
-    tag.tag_name = getRandomParagraph(['entertaiment', 'tech', 'ecommercial', 'ai', 'crypto', 'bigdata']);
-    tag.icon = `Icon ${i + 1}`;
+    tag.name = getRandomParagraph(['entertaiment', 'tech', 'ecommercial', 'ai', 'crypto', 'bigdata']);
     tag.created_at = new Date();
     tag.updated_at = new Date();
-    tag.estimate_days = i + 1;
 
     const product = new Product();
     product.product_name = `Product Name ${i + 1}`;

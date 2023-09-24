@@ -1,16 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { ErrorResponse, SuccessResponse } from '@/core/provider/api-operation.abstract';
 import CookieBase from './cookie.base';
-import Container, { Service } from 'typedi';
-import CustomerSessionModule from '@/customer-session/customer-session.module';
+import { Service } from 'typedi';
 
 @Service()
-class CookieService<T, D> extends CookieBase<T, D> {
-  constructor(req: NextApiRequest, res: NextApiResponse<SuccessResponse<T> | ErrorResponse>) {
+class CookieService extends CookieBase {
+  constructor(req: NextApiRequest, res: NextApiResponse) {
     super(req, res);
   }
 
-  public setSessionClientSide(data: D, timer: number, path: string) {
+  public setSessionClientSide(data, timer: number, path: string) {
     this.setCookie(this.res, data, timer, path);
     this.res.status(200).send({ message: 'cookies was set succeed!' });
   }

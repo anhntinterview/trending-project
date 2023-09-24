@@ -4,7 +4,7 @@ import { promises as fs } from 'fs';
 import { Customer } from '@db/entity/customer.entity';
 import Container, { Service } from 'typedi';
 import { GetOneByAttribute } from '@root/type/entity/common';
-import CustomerService from '@/customer/customer.service';
+import CRUDService from '../service/crud/crud.service';
 
 // List security technical includes:
 // 1. Crypto keyPair
@@ -22,7 +22,7 @@ class SecurityConfig<T> {
     this.fileDirectory = path.join(process.cwd());
   }
 
-  private customerService = Container.get(CustomerService<T>);
+  private crudService = Container.get(CRUDService);
 
   async privateKey() {
     return await fs.readFile(this.fileDirectory + '/id_rsa_priv.pem', 'utf8');
@@ -57,7 +57,7 @@ class SecurityConfig<T> {
       valueAttr: email
     };
 
-    const customer = await this.customerService.findOneByAttribute(bodyData);
+    const customer = await this.crudService.findOneByAttribute(bodyData);
     if (customer?.active) {
       return true;
     } else {

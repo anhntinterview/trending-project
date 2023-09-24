@@ -5,7 +5,7 @@ import ApiOperationBase from '@/core/provider/api-operation.base';
 import { ErrorResponse, SuccessResponse } from '@/core/provider/api-operation.abstract';
 import { COOKIE_NAME } from './cookie-name.type';
 
-class CookieBase<T, D> extends ApiOperationBase<T> {
+class CookieBase extends ApiOperationBase {
   private sessionSecret = process.env.SESSION_SECRET;
   private IVLength = 16;
 
@@ -41,7 +41,7 @@ class CookieBase<T, D> extends ApiOperationBase<T> {
     return decrypted.toString();
   }
 
-  protected setCookie(res: NextApiResponse<SuccessResponse<T> | ErrorResponse>, data: D, timer: number, path: string) {
+  protected setCookie(res: NextApiResponse, data, timer: number, path: string) {
     const encryptedData = this.encrypt(JSON.stringify(data));
     res.setHeader(
       'Set-Cookie',
@@ -57,7 +57,7 @@ class CookieBase<T, D> extends ApiOperationBase<T> {
     return null;
   }
 
-  constructor(req: NextApiRequest, res: NextApiResponse<SuccessResponse<T> | ErrorResponse>) {
+  constructor(req: NextApiRequest, res: NextApiResponse) {
     super(req, res);
   }
 }

@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, CreateDa
 import { ITag } from '@root/type/entity/ITag';
 import { Post } from './post.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { Customer } from './customer.entity';
 
 @Entity({name: 'tag'})
 export class Tag implements ITag{
@@ -13,11 +14,6 @@ export class Tag implements ITag{
   @IsNotEmpty()
   name: string;
 
-  @Column({ type: 'text'})
-  @IsString()
-  @IsNotEmpty()
-  icon: string;
-
   @CreateDateColumn({type: 'timestamptz'})
   created_at: Date;
 
@@ -27,4 +23,8 @@ export class Tag implements ITag{
   @ManyToMany(() => Post, (post) => post.tags)
   @JoinTable()
   posts?: Post[];
+
+  @ManyToMany(() => Post, (post) => post.tags)
+  @JoinTable()
+  customers?: Customer[];
 }

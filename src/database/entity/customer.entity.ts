@@ -4,6 +4,7 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 import { ICustomer } from "@root/type/entity/ICustomer";
 // import { CustomerSession } from "./customer-session.entity";
 import { Role } from "./role.entity";
+import { Tag } from "./tag.entity";
 
 @Entity({name: 'customer'})
 export class Customer implements ICustomer {
@@ -57,4 +58,7 @@ export class Customer implements ICustomer {
 
   @ManyToMany(() => Role, (role) => role.customers, { cascade: true })
   roles?: Role[];
+
+  @ManyToMany(() => Tag, (tag) => tag.customers)
+  tags?: Tag[];
 }
