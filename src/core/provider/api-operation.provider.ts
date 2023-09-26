@@ -5,11 +5,9 @@ import { ErrorResponse, SuccessResponse } from '@/core/provider/api-operation.ab
 import ApiOperationBase from '@/core/provider/api-operation.base';
 import { MessageType, isNotVoid } from '@/util/type';
 
-// B: BodyDataType
-// R: ResultType
-
 @Service()
 class ApiOperationProvider extends ApiOperationBase {
+  
   private _errorResponse: ErrorResponse;
 
   public set errorResponse(v: ErrorResponse) {
@@ -49,8 +47,11 @@ class ApiOperationProvider extends ApiOperationBase {
     return this.res.status(400).json(this.errorResponse);
   }
 
+  
+
   constructor(req: NextApiRequest, res: NextApiResponse) {
     super(req, res);
+    this.allowCors();
   }
 }
 
