@@ -23,13 +23,13 @@ class ApiProvider extends ApiOperationProvider {
     }
   }
 
-  public async handleBodyDataResponse(
-    method: APIMethodType,
-    callback: (bodyData: unknown) => Promise<unknown>
-  ) {
+  public async handleBodyDataResponse(method: APIMethodType, callback: (bodyData: unknown) => Promise<unknown>) {
     const { bodyData } = this.req.body;
-    if (bodyData) {
-      await this.methodProvider[method](() => this.execute(() => callback(bodyData)));
+
+    const _bodyData = typeof this.req.body === 'string' ? JSON.parse(this.req.body) : bodyData;
+
+    if (_bodyData) {
+      await this.methodProvider[method](() => this.execute(() => callback(_bodyData)));
     } else {
       this.errorResponse = { error: 'bodyData was not defined' };
       return this.sendErrorResponse();
@@ -38,10 +38,7 @@ class ApiProvider extends ApiOperationProvider {
 
   public async handleHttpRequestResponse(
     method: APIMethodType,
-    callback: (
-      id?: undefined | string | Array<string>,
-      bodyData?: unknown
-    ) => Promise<unknown>,
+    callback: (id?: undefined | string | Array<string>, bodyData?: unknown) => Promise<unknown>,
     APIParameter?: APIParameterType
   ) {
     switch (APIParameter) {

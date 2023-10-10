@@ -4,5 +4,5 @@ import PostModule from '@/post/post.module';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const postModule = new PostModule(req, res);
-  await postModule.crudModule.createOne();
+  await postModule.createOne();
 }

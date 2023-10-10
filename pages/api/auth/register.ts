@@ -4,5 +4,5 @@ import AuthModule from '@/authentication/auth.module';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const authModule = new AuthModule(req, res);
-  await authModule.register();
+  return await authModule.register();
 }

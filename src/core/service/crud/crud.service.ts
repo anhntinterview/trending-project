@@ -1,6 +1,8 @@
 import { GetOneByAttribute } from '@root/type/entity/common';
+import { Service } from 'typedi';
 import { Repository, EntityTarget, ObjectLiteral, In } from 'typeorm';
 
+@Service()
 class CRUDService<T extends EntityTarget<ObjectLiteral>, F extends EntityTarget<ObjectLiteral>> {
   private constraintTable: string;
   private entityTable: string;

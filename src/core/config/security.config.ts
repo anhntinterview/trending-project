@@ -2,9 +2,11 @@ import jwt from 'jsonwebtoken';
 import path from 'path';
 import { promises as fs } from 'fs';
 import { Customer } from '@db/entity/customer.entity';
-import Container, { Service } from 'typedi';
+import { Service } from 'typedi';
 import { GetOneByAttribute } from '@root/type/entity/common';
 import CRUDService from '../service/crud/crud.service';
+import CustomerRepository from '@/customer/customer.repository';
+import CustomerAddressRepository from '@/customer-address/customer-address.repository';
 
 // List security technical includes:
 // 1. Crypto keyPair
@@ -22,7 +24,7 @@ class SecurityConfig<T> {
     this.fileDirectory = path.join(process.cwd());
   }
 
-  private crudService = Container.get(CRUDService);
+  private crudService = new CRUDService(CustomerRepository, CustomerAddressRepository, 'customer', 'addresses');
 
   async privateKey() {
     return await fs.readFile(this.fileDirectory + '/id_rsa_priv.pem', 'utf8');

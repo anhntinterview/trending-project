@@ -11,10 +11,6 @@ export class PostBodyDataValidation {
   @IsString()
   coverImage: string;
 
-  @IsNotEmpty()
-  @IsString()
-  excerpt: string;
-
   @IsString()
   ogImage: string;
 

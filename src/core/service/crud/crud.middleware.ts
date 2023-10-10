@@ -4,6 +4,7 @@ import { Service } from 'typedi';
 import { validate } from 'class-validator';
 import ApiProvider from '@/core/provider/singleton/api.provider';
 import CRUDService from '@/core/service/crud/crud.service';
+import slugify from 'slugify';
 
 import { APIMethodType } from '@root/type/entity/common';
 
@@ -71,6 +72,17 @@ class CRUDMiddleware<T extends EntityTarget<ObjectLiteral>, F extends EntityTarg
       async (bodyData: object) => {
         await this.validate(validateBodyData, bodyData, async () => {
           for (const key in bodyData) {
+            if (bodyData['tags'].length > 0) {
+              console.log(`--- bodyData['tags']:`, bodyData['tags']);
+              bodyData['tags'].forEach((item) => {
+                if (item.name === 'post') {
+                  newEntity.slug = slugify(bodyData['title'], { lower: true });
+                  newEntity.excerpt = `${bodyData['content'].slice(100)}...`
+                  newEntity.created_by = bodyData['customerId']
+                  newEntity.updated_by = bodyData['customerId']
+                }
+              });
+            }
             if (bodyData.hasOwnProperty(key)) {
               newEntity[key] = bodyData[key];
             } else {
