@@ -22,6 +22,7 @@ class ApiOperationProvider extends ApiOperationBase {
     try {
       await this.initializeDBConnection();
       const rs = await callback()
+      console.log(`rs: `,rs);
       return this.sendSuccessResponse(rs)
     } catch (error) {
       console.log(`error from ISSUE API_OPERATATION: `, this.errorResponse);

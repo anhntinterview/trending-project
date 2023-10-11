@@ -14,7 +14,7 @@ class ApiProvider extends ApiOperationProvider {
     method: APIMethodType,
     callback: (param: undefined | string | Array<string>) => Promise<unknown>
   ) {
-    const { param } = this.req.query;
+    const param = this.req.query.param ? this.req.query.param : this.req.query.id;
     if (param) {
       await this.methodProvider[method](() => this.execute(() => callback(param)));
     } else {
