@@ -21,6 +21,7 @@ class AuthModule<T> extends ApiProvider {
     await this.authMiddleware.verifyJWT(callback);
   }
 
+  //example: http://localhost:3000/api/auth/active-account?param=nguyentrai@gmail.com
   async activeAccount() {
     await this.authMiddleware.activeAccount();
   }

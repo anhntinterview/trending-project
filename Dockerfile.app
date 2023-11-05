@@ -12,5 +12,5 @@ RUN yarn build
 
 ENV NODE_ENV="production"
 
-CMD ["yarn", "start"]
+CMD ["yarn", "deploy"]
 
